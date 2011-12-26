@@ -1,7 +1,7 @@
 [core]
 	excludesfile = ~/.gitignore
 [user]
-	email = vikke.bsd@gmail.com
-	name = MATSUNAGA Ichiro
+	email = smihica@gmail.com
+	name = smihica
 [alias]
 	l = log --name-status
