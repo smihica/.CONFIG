@@ -7,6 +7,9 @@ call pathogen#runtime_append_all_bundles()
 
 let mapleader=","
 
+" ignore viminfo
+set viminfo=
+
 set ai
 set number
 set ts=4

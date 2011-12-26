@@ -7,7 +7,7 @@ function link_dotfile {
 	dst=${2}
 
 	mv ${HOME}/${dst} ${backup}/${dst}
-	ln -s ${PWD}/${src} ${HOME}/${dst}	
+	ln -s ${PWD}/${src} ${HOME}/${dst}
 }
 
 if [ ! -e ${backup} ]; then
@@ -15,29 +15,15 @@ if [ ! -e ${backup} ]; then
 fi
 
 for f in \
-	.bashrc \
-	.bash_profile \
-	.fetchmailrc \
-	.gitconfig \
-	.gitignore \
-	.mayu \
-	.msmtprc \
-	.Xdefaults \
-	.Xresources \
-	.xprofile \
-	.xsession \
+	.profile \
+	.zshrc \
 	.termcap \
 	.tmux.conf \
-	.mailcap \
-	.msmtpqueue \
-	.offlineimaprc \
-	.procmailrc \
-	.mutt \
 	.vim \
 	.vimrc \
+	.emacs.d \
 	skk-dic \
-	.infokey \
-	.gvimrc 
+	.gvimrc
 do
 
 	link_dotfile ${f} ${f}
@@ -46,16 +32,16 @@ done
 
 case $OSTYPE in
 	darwin*)
-		link_dotfile .Xmodmap.mac .Xmodmap
+
 		;;
+
 	freebsd*)
-		
+
 		;;
-	
+
 	linux*)
-		link_dotfile .Xmodmap.ubuntu .Xmodmap
 		;;
-	
+
 	*)
 		;;
 esac
@@ -69,4 +55,11 @@ echo "
 .ssh \
 .gnupg \
 is not linked.
+
+INSTALL:
+	zsh
+	keychain
+	vim
+	emacs
+	tmux
 "
