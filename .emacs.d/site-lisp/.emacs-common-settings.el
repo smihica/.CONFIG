@@ -66,8 +66,8 @@
  "\M-8" 'enlarge-window
  "\M-7" 'shrink-window
  "\M-6" 'shrink-window-horizontally
- "\M-'" 'other-window
- "\M-;" 'dabbrev-expand-multiple
+ "\M-;" 'other-window
+ "\M-'" 'dabbrev-expand-multiple
  "\C-x\C-k" 'kill-buffer
  "\C-xk" 'kill-buffer
  "\C-x\C-g" 'goto-line
