@@ -216,6 +216,13 @@
              (setq c-basic-offset 4)
              (setq show-trailing-whitespace t)))
 
+;; asm
+(require 'gas-mode)
+(append-auto-mode-alist "\\.asm$" 'gas-mode)
+
+;; haXe
+(require 'haxe-mode)
+(append-auto-mode-alist "\\.hx$" 'haxe-mode)
 
 ;yacc/lex
 (append-auto-mode-alist "\\.l$" 'c-mode)
