@@ -56,6 +56,10 @@
 ;;(setq auto-save-list-file-prefix (concat temp-files-dir ".auto-saves-"))
 ;;(setq auto-save-file-name-transforms `((".*" ,temp-files-dir t)))
 
+;; color-moccur
+(require 'color-moccur)
+(require 'moccur-edit)
+
 ;; keyBind
 (global-unset-keys 
  "\e\e\e"
@@ -66,13 +70,14 @@
  "\M-8" 'enlarge-window
  "\M-7" 'shrink-window
  "\M-6" 'shrink-window-horizontally
+ "\M-5" 'moccur-grep-find
+ "\M-4" 'query-replace-regexp
+ "\M-3" 'query-replace
  "\M-;" 'other-window
  "\M-'" 'dabbrev-expand-multiple
  "\C-x\C-k" 'kill-buffer
  "\C-xk" 'kill-buffer
  "\C-x\C-g" 'goto-line
- "\M-6" 'query-replace-regexp
- "\M-5" 'query-replace
  "\C-j" 'newline
  "\C-h" 'backward-delete-char
  "\M-." 'end-of-buffer
@@ -93,42 +98,42 @@
 ;;; modes
 ;;;
 
-;; term-mode
-(setq system-uses-terminfo nil)
-(setq shell-file-name
-      (or (executable-find "zsh")
-          (executable-find "bash")
-          (executable-find "cmdproxy")
-          (error "can't find 'shell' command in PATH!!")))
-(setenv "SHELL" shell-file-name)
-(setq explicit-shell-file-name shell-file-name)
+;; ;; term-mode
+;; (setq system-uses-terminfo nil)
+;; (setq shell-file-name
+;;       (or (executable-find "zsh")
+;;           (executable-find "bash")
+;;           (executable-find "cmdproxy")
+;;           (error "can't find 'shell' command in PATH!!")))
+;; (setenv "SHELL" shell-file-name)
+;; (setq explicit-shell-file-name shell-file-name)
 
-;; multi-term
-(require 'multi-term)
-(setq multi-term-program shell-file-name)
-(add-hook 'term-mode-hook
-          (lambda ()
-            (setq show-trailing-whitespace nil)))
+;; ;; multi-term
+;; (require 'multi-term)
+;; (setq multi-term-program shell-file-name)
+;; (add-hook 'term-mode-hook
+;;           (lambda ()
+;;             (setq show-trailing-whitespace nil)))
 
-;; shell-mode
-(autoload
-  'ansi-color-for-comint-mode-on "ansi-color"
-  "Set `ansi-color-for-comint-mode' to t." t)
-(setq ansi-color-names-vector
-      ["#000000"           ; black
-       "#ff6565"           ; red
-       "#93d44f"           ; green
-       "#eab93d"           ; yellow
-       "#204a87"           ; blue
-       "#ce5c00"           ; magenta
-       "#89b6e2"           ; cyan
-       "#ffffff"]          ; white
-      )
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-(add-hook 'comint-mode-hook
-          (lambda ()
-            (setq show-trailing-whitespace nil)
-            (setq comint-process-echoes t)))
+;; ;; shell-mode
+;; (autoload
+;;   'ansi-color-for-comint-mode-on "ansi-color"
+;;   "Set `ansi-color-for-comint-mode' to t." t)
+;; (setq ansi-color-names-vector
+;;       ["#000000"           ; black
+;;        "#ff6565"           ; red
+;;        "#93d44f"           ; green
+;;        "#eab93d"           ; yellow
+;;        "#204a87"           ; blue
+;;        "#ce5c00"           ; magenta
+;;        "#89b6e2"           ; cyan
+;;        "#ffffff"]          ; white
+;;       )
+;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+;; (add-hook 'comint-mode-hook
+;;           (lambda ()
+;;             (setq show-trailing-whitespace nil)
+;;             (setq comint-process-echoes t)))
 
 ;; javascript
 (add-hook
@@ -338,3 +343,9 @@
 ;;downcase upcase -region enable
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
+
+;; auto-install
+;(require 'auto-install)
+;(setq auto-install-directory "~/.emacs.d/auto-install-site/")
+;;(auto-install-update-emacswiki-package-name t)
+;(auto-install-compatibility-setup)
