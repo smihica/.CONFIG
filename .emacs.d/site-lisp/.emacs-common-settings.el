@@ -143,6 +143,7 @@
    ;(setq espresso-indent-level 2)
    (setq js-indent-level 2)
    (slime-js-minor-mode 1)))
+(append-auto-mode-alist "\\.json$" 'js-mode)
 
 ;; html
 (append-auto-mode-alist "\\.mako$" 'html-mode) ;; pyramid. (python)
@@ -343,6 +344,10 @@
 ;;downcase upcase -region enable
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
+
+;; wdired
+(require 'wdired)
+(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 
 ;; auto-install
 ;(require 'auto-install)
