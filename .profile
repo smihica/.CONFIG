@@ -19,9 +19,12 @@ export CXXFLAGS="-I$INCLUDEDIR $ARC"
 export LDFLAGS="-L$LIBDIR $ARC"
 
 #
+# Android NDK
+#
+ANDROID_NDK_HOME="/Users/smihica/opt/sdk/android-ndk"
+
+#
 # PATH
 #
 BINDIR="$HOME/opt/bin"
-PATH="$HOME/opt/bin:$PATH"
-
-
+PATH="$HOME/opt/bin:$ANDROID_NDK_HOME:$PATH"
