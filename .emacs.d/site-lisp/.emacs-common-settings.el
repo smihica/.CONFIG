@@ -43,6 +43,9 @@
     (setq truncate-lines t))
   (recenter))
 
+;; cua-mode
+(cua-mode t)
+(setq cua-enable-cua-keys nil)
 
 ;;backupFile
 (defvar backup-files-dir (expand-file-name "~/.emacs.d/backup-files"))
