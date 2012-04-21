@@ -233,8 +233,10 @@
 (require 'haxe-mode)
 (append-auto-mode-alist "\\.hx$" 'haxe-mode)
 
-;; scss
+;; scss/sass
+(require 'scss-mode)
 (require 'sass-mode)
+(append-auto-mode-alist "\\.scss$" 'scss-mode)
 (append-auto-mode-alist "\\.sass$" 'sass-mode)
 
 ;yacc/lex
