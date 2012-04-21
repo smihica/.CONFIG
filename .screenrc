@@ -11,5 +11,5 @@ defbce "on"
 # shell title
 shelltitle '% |zsh'
 # terminal
-term xterm-256color
+term xterm-color
 termcapinfo xterm-color 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'

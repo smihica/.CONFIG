@@ -28,3 +28,8 @@ ANDROID_NDK_HOME="/Users/smihica/opt/sdk/android-ndk"
 #
 BINDIR="$HOME/opt/bin"
 PATH="$HOME/opt/bin:$ANDROID_NDK_HOME:$PATH"
+
+#
+# TERM
+#
+export TERM="xterm-color"
