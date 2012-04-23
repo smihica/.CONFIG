@@ -238,6 +238,7 @@
 (require 'sass-mode)
 (append-auto-mode-alist "\\.scss$" 'scss-mode)
 (append-auto-mode-alist "\\.sass$" 'sass-mode)
+(setq scss-compile-at-save nil) ;; don't auto-compile
 
 ;yacc/lex
 (append-auto-mode-alist "\\.l$" 'c-mode)
