@@ -4,4 +4,23 @@
 	email = smihica@gmail.com
 	name = smihica
 [alias]
-	l = log --name-status
+        l = log --name-status
+        #st = status -uno
+        #st = status -sb
+        #ci = commit
+        #co = checkout
+        #hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short --decorate
+        hist = log --pretty=format:\"[32m%h %ad[0m | [33m%d[0m %s\" --graph --date=short --decorate
+        history = log --oneline --graph --date=short --decorate
+        branches = branch -a
+        switch  = checkout
+        sw      = checkout
+        fork    = checkout -b
+        #join    = merge --ff-only
+        join    = merge --no-ff
+        stage   = add -p
+        staged  = diff --cached
+        unstage = reset HEAD
+        stashed = stash list
+        correct = commit --amend
+        histdiff = cherry -v

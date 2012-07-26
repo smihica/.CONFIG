@@ -22,7 +22,6 @@ for f in \
 	.vim \
 	.vimrc \
 	.emacs.d \
-	skk-dic \
 	.gvimrc
 do
 

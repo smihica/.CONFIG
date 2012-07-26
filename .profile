@@ -11,7 +11,7 @@ export LC_CTYPE=ja_JP.UTF-8
 #
 INCLUDEDIR="$HOME/opt/include"
 LIBDIR="$HOME/opt/lib"
-ARC= # "-arch i386" #-arch X86_64
+ARC="-arch X86_64" # "-arch i386"
 
 export ARCHFLAGS="$ARC"
 export CFLAGS="-I$INCLUDEDIR $ARC"
@@ -28,6 +28,8 @@ ANDROID_NDK_HOME="/Users/smihica/opt/sdk/android-ndk"
 #
 BINDIR="$HOME/opt/bin"
 PATH="$HOME/opt/bin:$ANDROID_NDK_HOME:$PATH"
+PATH="$HOME/code/altair/env/bin/:$PATH"
+PATH="/usr/local/mysql/bin/:$PATH"
 
 #
 # TERM

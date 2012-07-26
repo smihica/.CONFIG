@@ -1,0 +1,1 @@
+/Users/smihica/.CONFIG/.emacs.d
