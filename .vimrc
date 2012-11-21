@@ -376,8 +376,15 @@ set t_Co=256
 "colorscheme xterm16
 "let xterm16_brightness = 'soft'
 
+:set background=dark
+
 "colorscheme midnight2
-colorscheme xterm16
+"colorscheme GRB256
+
+if &t_Co > 2 || has("gui_running")
+	syntax on
+	colorscheme hemisu
+endif
 
 "hi Normal ctermfg=248 ctermbg=none
 

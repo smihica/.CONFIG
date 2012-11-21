@@ -1,5 +1,6 @@
 [core]
 	excludesfile = ~/.gitignore
+        editor=/usr/bin/vim
 [user]
 	email = smihica@gmail.com
 	name = smihica

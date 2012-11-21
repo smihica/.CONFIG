@@ -145,7 +145,8 @@
    ;(setq javascript-indent-level 2)
    ;(setq espresso-indent-level 2)
    (setq js-indent-level 2)
-   (slime-js-minor-mode 1)))
+   ;(slime-js-minor-mode 1)
+   ))
 (append-auto-mode-alist "\\.json$" 'js-mode)
 
 ;; html
@@ -267,7 +268,7 @@
     slime-typeout-frame
     slime-xref-browser
     slime-scheme
-    slime-js
+    ; slime-js
     slime-repl
     ))
 
@@ -364,3 +365,7 @@
 ;(setq auto-install-directory "~/.emacs.d/auto-install-site/")
 ;;(auto-install-update-emacswiki-package-name t)
 ;(auto-install-compatibility-setup)
+
+;; clojure
+(require 'clojure-mode)
+(autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
