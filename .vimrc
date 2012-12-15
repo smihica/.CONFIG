@@ -375,16 +375,15 @@ set t_Co=256
 " ここでgui版じゃないcolorschemeを設定。.gvimrcで再定義しなければgvimでも使われる。
 "colorscheme xterm16
 "let xterm16_brightness = 'soft'
-
-:set background=dark
-
 "colorscheme midnight2
 "colorscheme GRB256
+":set background=dark
+"if &t_Co > 2 || has("gui_running")
+"	syntax on
+"	colorscheme hemisu
+"endif
 
-if &t_Co > 2 || has("gui_running")
-	syntax on
-	colorscheme hemisu
-endif
+colorscheme wombat256
 
 "hi Normal ctermfg=248 ctermbg=none
 

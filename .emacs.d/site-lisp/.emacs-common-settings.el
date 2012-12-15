@@ -52,12 +52,13 @@
 (defvar temp-files-dir (expand-file-name "~/.emacs.d/temp-files"))
 
 (setq make-backup-files t)
+;(setq backup-by-copying t)
+;(setq backup-by-copying-when-mismatch t)
+;(setq backup-by-copying-when-linked t)
 (setq backup-directory-alist (cons (cons "\\.*$" backup-files-dir) nil))
-
-;;(setq backup-by-copying t)
-;;(setq backup-by-copying-when-linked t)
-;;(setq auto-save-list-file-prefix (concat temp-files-dir ".auto-saves-"))
-;;(setq auto-save-file-name-transforms `((".*" ,temp-files-dir t)))
+;(setq auto-save-file-name-transforms `(("\\.*$" ,(concat temp-files-dir "/\\1") t)))
+;(setq version-control t)
+;(setq-default delete-old-versions t)
 
 ;; color-moccur
 (require 'color-moccur)
@@ -150,6 +151,12 @@
 (append-auto-mode-alist "\\.json$" 'js-mode)
 
 ;; html
+(require 'zencoding-mode)
+;; Auto-start on any markup modes
+(add-hook 'sgml-mode-hook 'zencoding-mode)
+(add-hook 'html-mode-hook 'zencoding-mode)
+(add-hook 'text-mode-hook 'zencoding-mode)
+
 (append-auto-mode-alist "\\.mako$" 'html-mode) ;; pyramid. (python)
 
 ;; css
@@ -369,3 +376,13 @@
 ;; clojure
 (require 'clojure-mode)
 (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
+
+;; typescript
+(require 'typescript)
+(defmode typescript-mode "\\.ts$"
+  (add-hook 'typescript-mode-hook
+            (lambda ()
+              (setq tab-width 4)
+              (setq typescript-indent-level 2)
+              (setq c-tab-always-indent nil)
+              (setq show-trailing-whitespace t))))

@@ -22,12 +22,14 @@ export LDFLAGS="-L$LIBDIR $ARC"
 # Android NDK
 #
 ANDROID_NDK_HOME="/Users/smihica/opt/sdk/android-ndk"
+ANDROID_SDK_TOOLS="/Users/smihica/opt/sdk/android-sdk-macosx/tools"
+ANDROID_SDK_PLATFORM_TOOLS="/Users/smihica/opt/sdk/android-sdk-macosx/platform-tools/"
 
 #
 # PATH
 #
 BINDIR="$HOME/opt/bin"
-PATH="$HOME/opt/bin:$ANDROID_NDK_HOME:$PATH"
+PATH="$HOME/opt/bin:$ANDROID_NDK_HOME:$ANDROID_SDK_TOOLS:$ANDROID_SDK_PLATFORM_TOOLS:$PATH"
 PATH="$HOME/code/altair/env/bin/:$PATH"
 PATH="/usr/local/mysql/bin/:$PATH"
 
