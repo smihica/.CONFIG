@@ -98,6 +98,12 @@
 (setq dabbrev-expand-multiple-inline-show-face nil)
 (setq dabbrev-expand-multiple-use-tooltip nil)
 
+;;; ignoreing case switch in completion.
+(setq completion-ignore-case t)
+
+;;; auto buffer reload when the file is updated by other program.
+(global-auto-revert-mode 1)
+
 ;;;
 ;;; modes
 ;;;
@@ -386,3 +392,9 @@
               (setq typescript-indent-level 2)
               (setq c-tab-always-indent nil)
               (setq show-trailing-whitespace t))))
+
+;; auto-complete
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
+(ac-config-default)
