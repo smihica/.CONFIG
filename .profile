@@ -30,6 +30,8 @@ darwin*)
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"
     LIBDIR="/usr/lib -L$LIBDIR"
+    # for rubygems
+    PATH="/var/lib/gems/1.8/bin/:$PATH"
     ;;
 esac
 
