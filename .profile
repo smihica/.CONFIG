@@ -26,6 +26,16 @@ darwin*)
     # for mysql
     MYSQL_BIN="/usr/local/mysql/bin/"
     PATH="$ANDROID_NDK_HOME:$ANDROID_SDK_TOOLS:$ANDROID_SDK_PLATFORM_TOOLS:$MYSQL_BIN:$PATH"
+    # for go
+    PATH="/usr/local/go/bin:$PATH"
+    # for llvm
+    PATH="/opt/local/libexec/llvm-3.2/bin:$PATH"
+    # macports include and lib
+    INCLUDEDIR="/opt/local/include -I$INCLUDEDIR"
+    LIBDIR="/opt/local/lib -L$LIBDIR"
+    # llvm
+    INCLUDEDIR="/opt/local/libexec/llvm-3.2/include -I$INCLUDEDIR"
+    LIBDIR="/opt/local/libexec/llvm-3.2/lib -L$LIBDIR"
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"

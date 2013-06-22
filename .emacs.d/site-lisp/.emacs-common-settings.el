@@ -160,8 +160,8 @@
 (require 'zencoding-mode)
 ;; Auto-start on any markup modes
 (add-hook 'sgml-mode-hook 'zencoding-mode)
-(add-hook 'html-mode-hook 'zencoding-mode)
-(add-hook 'text-mode-hook 'zencoding-mode)
+(add-hook 'css-mode-hook  'zencoding-mode)
+(add-hook 'zencoding-mode-hook (lambda () (setq zencoding-indentation 2)))
 
 (append-auto-mode-alist "\\.mako$" 'html-mode) ;; pyramid. (python)
 
@@ -398,3 +398,11 @@
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default)
+
+
+;; node
+(add-to-list
+ 'comint-preoutput-filter-functions
+ (lambda (output)
+   (replace-regexp-in-string "\\(?:\\[[0-9][GKJ]\\|\\[\\?[0-9][lh]\\|=\\|>\\|\\[J\\)" "" output)
+   ))
