@@ -16,6 +16,7 @@
 
 ;; set load-path to ~/.emacs.d/site-lisp
 (defconst my-site-root (expand-file-name "~/.emacs.d/site-lisp"))
+(defconst my-elpa-root (expand-file-name "~/.emacs.d/elpa"))
 (my-site-lisp-registration my-site-root 1)
 
 (load ".emacs-util.el")

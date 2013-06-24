@@ -1,4 +1,4 @@
-;;; -*- indent-tabs-mode:nil coding:latin-1-unix -*-
+;;; -*- indent-tabs-mode: nil; coding: latin-1-unix -*-
 ;;;
 ;;; swank-rpc.lisp  -- Pass remote calls and responses between lisp systems.
 ;;;
@@ -32,17 +32,17 @@
   (let ((packet (read-packet stream)))
     (handler-case (values (read-form packet package))
       (reader-error (c)
-        (error (make-condition 'swank-reader-error 
-                               :packet packet :cause c))))))
+        (error 'swank-reader-error 
+               :packet packet :cause c)))))
 
 (defun read-packet (stream)
   (let* ((length (parse-header stream))
          (octets (read-chunk stream length)))
     (handler-case (swank-backend:utf8-to-string octets)
       (error (c) 
-        (error (make-condition 'swank-reader-error 
-                               :packet (asciify octets)
-                               :cause c))))))
+        (error 'swank-reader-error 
+               :packet (asciify octets)
+               :cause c)))))
 
 (defun asciify (packet)
   (with-output-to-string (*standard-output*)
@@ -59,8 +59,12 @@
 (defun read-chunk (stream length)
   (let* ((buffer (make-array length :element-type '(unsigned-byte 8)))
          (count (read-sequence buffer stream)))
-    (assert (= count length) () "Short read: length=~D  count=~D" length count)
-    buffer))
+    (cond ((= count length)
+           buffer)
+          ((zerop count)
+           (error 'end-of-file :stream stream))
+          (t
+           (error "Short read: length=~D  count=~D" length count)))))
 
 ;; FIXME: no one ever tested this and will probably not work.
 (defparameter *validate-input* nil

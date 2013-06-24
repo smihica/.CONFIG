@@ -101,7 +101,7 @@ freebsd*)
     ;;
 darwin*)
     alias ls="ls -G -w"
-    alias emacs="emacs -nw"
+    # alias emacs="emacs-24.3"
     alias vim="vi"
     ;;
 linux*)

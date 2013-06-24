@@ -1,3 +1,11 @@
+;; marmalade
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list 'package-archives
+               '("marmalade" .
+                 "http://marmalade-repo.org/packages/"))
+  (package-initialize))
+
 ;;coding
 (set-language-environment 'utf-8)
 (set-default-coding-systems 'utf-8-unix)
@@ -157,11 +165,11 @@
 (append-auto-mode-alist "\\.json$" 'js-mode)
 
 ;; html
-(require 'zencoding-mode)
+(require 'emmet-mode)
 ;; Auto-start on any markup modes
-(add-hook 'sgml-mode-hook 'zencoding-mode)
-(add-hook 'css-mode-hook  'zencoding-mode)
-(add-hook 'zencoding-mode-hook (lambda () (setq zencoding-indentation 2)))
+(add-hook 'sgml-mode-hook 'emmet-mode)
+(add-hook 'css-mode-hook  'emmet-mode)
+(add-hook 'emmet-mode-hook (lambda () (setq emmet-indentation 2)))
 
 (append-auto-mode-alist "\\.mako$" 'html-mode) ;; pyramid. (python)
 
@@ -244,15 +252,12 @@
 (append-auto-mode-alist "\\.asm$" 'gas-mode)
 
 ;; haXe
-(require 'haxe-mode)
-(append-auto-mode-alist "\\.hx$" 'haxe-mode)
+;; (require 'haxe-mode)
+;; (append-auto-mode-alist "\\.hx$" 'haxe-mode)
 
-;; scss/sass
-(require 'scss-mode)
+;; sass
 (require 'sass-mode)
-(append-auto-mode-alist "\\.scss$" 'scss-mode)
 (append-auto-mode-alist "\\.sass$" 'sass-mode)
-(setq scss-compile-at-save nil) ;; don't auto-compile
 
 ;yacc/lex
 (append-auto-mode-alist "\\.l$" 'c-mode)
@@ -260,31 +265,29 @@
 ;; slime
 (require 'slime)
 (setq inferior-lisp-program "sbcl")
-
 (setq slime-lisp-implementations '())
-
 (setq slime-net-coding-system 'utf-8-unix)
 (slime-setup
- '( inferior-slime
-    slime-asdf
-    slime-autodoc
-    slime-banner
-    slime-c-p-c
-    slime-editing-commands
-    slime-fancy-inspector
-    slime-fancy
-    slime-fuzzy
-    slime-parse
-    slime-references
-    slime-scratch
-    slime-tramp
-    slime-typeout-frame
-    slime-xref-browser
-    slime-scheme
-    ; slime-js
-    slime-repl
-    ))
-
+  '( inferior-slime
+     slime-asdf
+     slime-autodoc
+     slime-banner
+     slime-c-p-c
+     slime-editing-commands
+     slime-fancy-inspector
+     slime-fancy
+     slime-fuzzy
+     slime-parse
+     slime-references
+     slime-scratch
+     slime-tramp
+     slime-typeout-frame
+     slime-xref-browser
+     slime-scheme
+     ; slime-js
+     slime-repl
+     ))
+ 
 (defun slime-kill-all-buffers ()
   "Kill all the slime related buffers. This is only used by the
   repl command sayoonara."
@@ -294,13 +297,13 @@
             (string-match "^\\*slime-repl .*\\*$" (buffer-name buf))
             (string-match "^\\*sldb .*\\*$" (buffer-name buf)))
     (kill-buffer buf))))
-
+ 
 (defun slime-quit ()
   (interactive)
   (progn
     (if (slime-connected-p) (slime-disconnect))
     (slime-kill-all-buffers)))
-
+ 
 (add-hook 'lisp-mode-hook
   (lambda ()
    (progn
@@ -309,12 +312,11 @@
      (local-set-key "\C-\M-j" 'slime-insert-balanced-comments)
      (local-set-key "\C-\M-l" 'slime-remove-balanced-comments)
      (local-set-key "\C-c\C-q" 'slime-quit))))
+ 
+(add-to-list 'slime-lisp-implementations `(sbcl (,(executable-find "sbcl")) :coding-system utf-8-unix))
 
 ;;lisp-mode
 (append-auto-mode-alist "\\.cl$" 'lisp-mode)
-
-(add-to-list 'slime-lisp-implementations `(sbcl (,(executable-find "sbcl")) :coding-system utf-8-unix))
-
 (put 'if-let 'lisp-indent-function 2)
 (font-lock-add-keywords 'lisp-mode '(("\\([^']\\|^\\)(\\(if-let\\)[ \n)]" 2 font-lock-keyword-face)))
 (put 'aif 'lisp-indent-function 0)
@@ -384,14 +386,14 @@
 (autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
 
 ;; typescript
-(require 'typescript)
-(defmode typescript-mode "\\.ts$"
-  (add-hook 'typescript-mode-hook
-            (lambda ()
-              (setq tab-width 4)
-              (setq typescript-indent-level 2)
-              (setq c-tab-always-indent nil)
-              (setq show-trailing-whitespace t))))
+;; (require 'typescript)
+;; (defmode typescript-mode "\\.ts$"
+;;   (add-hook 'typescript-mode-hook
+;;             (lambda ()
+;;               (setq tab-width 4)
+;;               (setq typescript-indent-level 2)
+;;               (setq c-tab-always-indent nil)
+;;               (setq show-trailing-whitespace t))))
 
 ;; auto-complete
 (add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
@@ -399,10 +401,8 @@
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default)
 
-
-;; node
+;; for node-js repl in emacs.
 (add-to-list
  'comint-preoutput-filter-functions
  (lambda (output)
-   (replace-regexp-in-string "\\(?:\\[[0-9][GKJ]\\|\\[\\?[0-9][lh]\\|=\\|>\\|\\[J\\)" "" output)
-   ))
+   (replace-regexp-in-string "\\(?:\\[[0-9][GKJ]\\|\\[\\?[0-9][lh]\\|=\\|>\\|\\[J\\)" "" output)))

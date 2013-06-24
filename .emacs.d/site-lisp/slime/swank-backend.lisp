@@ -1,4 +1,4 @@
-;;; -*- Mode: lisp; indent-tabs-mode: nil; outline-regexp: ";;;;;*" -*-
+;;; -*- indent-tabs-mode: nil; outline-regexp: ";;;;;*" -*-
 ;;;
 ;;; slime-backend.lisp --- SLIME backend interface.
 ;;;
@@ -160,7 +160,6 @@ Backends implement these functions using DEFIMPLEMENTATION."
        ,(if (null default-body)
             `(pushnew ',name *unimplemented-interfaces*)
             (gen-default-impl))
-       ;; see <http://www.franz.com/support/documentation/6.2/doc/pages/variables/compiler/s_cltl1-compile-file-toplevel-compatibility-p_s.htm>
        (eval-when (:compile-toplevel :load-toplevel :execute)
          (export ',name :swank-backend))
        ',name)))
@@ -240,19 +239,21 @@ EXCEPT is a list of symbol names which should be ignored."
 
 (defmacro with-struct ((conc-name &rest names) obj &body body)
   "Like with-slots but works only for structs."
-  (flet ((reader (slot) (intern (concatenate 'string
-					     (symbol-name conc-name)
-					     (symbol-name slot))
-				(symbol-package conc-name))))
+  (check-type conc-name symbol)
+  (flet ((reader (slot)
+           (intern (concatenate 'string
+                                (symbol-name conc-name)
+                                (symbol-name slot))
+                   (symbol-package conc-name))))
     (let ((tmp (gensym "OO-")))
-    ` (let ((,tmp ,obj))
-        (symbol-macrolet
-            ,(loop for name in names collect 
-                   (typecase name
-                     (symbol `(,name (,(reader name) ,tmp)))
-                     (cons `(,(first name) (,(reader (second name)) ,tmp)))
-                     (t (error "Malformed syntax in WITH-STRUCT: ~A" name))))
-          ,@body)))))
+      ` (let ((,tmp ,obj))
+          (symbol-macrolet
+              ,(loop for name in names collect 
+                     (typecase name
+                       (symbol `(,name (,(reader name) ,tmp)))
+                       (cons `(,(first name) (,(reader (second name)) ,tmp)))
+                       (t (error "Malformed syntax in WITH-STRUCT: ~A" name))))
+            ,@body)))))
 
 (defmacro when-let ((var value) &body body)
   `(let ((,var ,value))
@@ -430,11 +431,22 @@ EXCEPT is a list of symbol names which should be ignored."
   "Convert the (simple-array (unsigned-byte 8)) OCTETS to a string."
   (default-utf8-to-string octets))
 
+;;; Codepoint length
+
+;; we don't need this anymore.
+(definterface codepoint-length (string)
+  "Return the number of codepoints in STRING.
+With some Lisps, like cmucl, LENGTH returns the number of UTF-16 code
+units, but other Lisps return the number of codepoints. The slime
+protocol wants string lengths in terms of codepoints."
+  (length string))
+
 
 ;;;; TCP server
 
-(definterface create-socket (host port)
-  "Create a listening TCP socket on interface HOST and port PORT .")
+(definterface create-socket (host port &key backlog)
+  "Create a listening TCP socket on interface HOST and port PORT.
+BACKLOG queue length for incoming connections.")
 
 (definterface local-port (socket)
   "Return the local port number of SOCKET.")
@@ -744,10 +756,12 @@ additional information on the specifiers defined in ANSI Common Lisp.")
       (type           '(type-specifier &rest args))
       (ftype          '(type-specifier &rest function-names))
       (otherwise
-       (flet ((typespec-p (symbol) (member :type (describe-symbol-for-emacs symbol))))
+       (flet ((typespec-p (symbol) 
+                (member :type (describe-symbol-for-emacs symbol))))
          (cond ((and (symbolp decl-identifier) (typespec-p decl-identifier))
                 '(&rest variables))
-               ((and (listp decl-identifier) (typespec-p (first decl-identifier)))
+               ((and (listp decl-identifier) 
+                     (typespec-p (first decl-identifier)))
                 '(&rest variables))
                (t :not-available)))))))
 
@@ -767,10 +781,16 @@ additional information on the specifiers defined in ANSI Common Lisp.")
                   :not-available))
       (t :not-available))))
 
+(definterface type-specifier-p (symbol)
+  "Determine if SYMBOL is a type-specifier."
+  (or (documentation symbol 'type)
+      (not (eq (type-specifier-arglist symbol) :not-available))))
+
 (definterface function-name (function)
   "Return the name of the function object FUNCTION.
 
-The result is either a symbol, a list, or NIL if no function name is available."
+The result is either a symbol, a list, or NIL if no function name is
+available."
   (declare (ignore function))
   nil)
 
@@ -825,8 +845,9 @@ symbol. The recognised keys are:
   :TYPE :CLASS :ALIEN-TYPE :ALIEN-STRUCT :ALIEN-UNION :ALIEN-ENUM
 
 The value of each property is the corresponding documentation string,
-or :NOT-DOCUMENTED. It is legal to include keys not listed here (but
-slime-print-apropos in Emacs must know about them).
+or NIL (or the obsolete :NOT-DOCUMENTED). It is legal to include keys
+not listed here (but slime-print-apropos in Emacs must know about
+them).
 
 Properties should be included if and only if they are applicable to
 the symbol. For example, only (and all) fbound symbols should include
@@ -949,6 +970,12 @@ frame which invoked the debugger.
 The return value is the result of evaulating FORM in the
 appropriate context.")
 
+(definterface frame-package (frame-number)
+  "Return the package corresponding to the frame at FRAME-NUMBER.
+Return nil if the backend can't figure it out."
+  (declare (ignore frame-number))
+  nil)
+
 (definterface frame-call (frame-number)
   "Return a string representing a call to the entry point of a frame.")
 
@@ -1049,7 +1076,8 @@ returns.")
   (cond ((typep datum 'condition)
          `(:error ,(format nil "Error: ~A" datum)))
         ((symbolp datum)
-         `(:error ,(format nil "Error: ~A" (apply #'make-condition datum args))))
+         `(:error ,(format nil "Error: ~A" 
+                           (apply #'make-condition datum args))))
         (t
          (assert (stringp datum))
          `(:error ,(apply #'format nil datum args)))))
@@ -1079,9 +1107,10 @@ respective DEFSTRUCT definition, and so on."
   (make-error-location "FIND-DEFINITIONS is not yet implemented on ~
                         this implementation."))
 
-
 (definterface buffer-first-change (filename)
-  "Called for effect the first time FILENAME's buffer is modified."
+  "Called for effect the first time FILENAME's buffer is modified.
+CMUCL/SBCL use this to cache the unmodified file and use the
+unmodified text to improve the precision of source locations."
   (declare (ignore filename))
   nil)
 
@@ -1182,6 +1211,19 @@ functions recorded.
 When called with arguments :METHODS T, profile all methods of all
 generic functions having names in the given package.  Generic functions
 themselves, that is, their dispatch functions, are left alone.")
+
+
+;;;; Trace
+
+(definterface toggle-trace (spec)
+  "Toggle tracing of the function(s) given with SPEC.
+SPEC can be:
+ (setf NAME)                            ; a setf function
+ (:defmethod NAME QUALIFIER... (SPECIALIZER...)) ; a specific method
+ (:defgeneric NAME)                     ; a generic function with all methods
+ (:call CALLER CALLEE)                  ; trace calls from CALLER to CALLEE.
+ (:labels TOPLEVEL LOCAL) 
+ (:flet TOPLEVEL LOCAL) ")
 
 
 ;;;; Inspector
@@ -1286,19 +1328,6 @@ have to be unique."
   (declare (ignore thread))
   '())
 
-(definterface make-lock (&key name)
-   "Make a lock for thread synchronization.
-Only one thread may hold the lock (via CALL-WITH-LOCK-HELD) at a time
-but that thread may hold it more than once."
-   (declare (ignore name))
-   :null-lock)
-
-(definterface call-with-lock-held (lock function)
-   "Call FUNCTION with LOCK held, queueing if necessary."
-   (declare (ignore lock)
-            (type function function))
-   (funcall function))
-
 (definterface current-thread ()
   "Return the currently executing thread."
   0)
@@ -1322,7 +1351,9 @@ Don't execute unwind-protected sections, don't raise conditions.
   nil)
 
 (definterface send (thread object)
-  "Send OBJECT to thread THREAD.")
+  "Send OBJECT to thread THREAD."
+  (declare (ignore thread))
+  object)
 
 (definterface receive (&optional timeout)
   "Return the next message from current thread's mailbox."
@@ -1330,6 +1361,19 @@ Don't execute unwind-protected sections, don't raise conditions.
 
 (definterface receive-if (predicate &optional timeout)
   "Return the first message satisfiying PREDICATE.")
+
+(definterface register-thread (name thread)
+  "Associate the thread THREAD with the symbol NAME.
+The thread can then be retrieved with `find-registered'.
+If THREAD is nil delete the association."
+  (declare (ignore name thread))
+  nil)
+
+(definterface find-registered (name)
+  "Find the thread that was registered for the symbol NAME.
+Return nil if the no thread was registred or if the tread is dead."
+  (declare (ignore name))
+  nil)
 
 (definterface set-default-initial-binding (var form)
   "Initialize special variable VAR by default with FORM.
@@ -1370,43 +1414,24 @@ return nil.
 
 Return :interrupt if an interrupt occurs while waiting.")
 
-(defun wait-for-streams (streams timeout)
-  (loop
-   (when (check-slime-interrupts) (return :interrupt))
-   (let ((ready (remove-if-not #'stream-readable-p streams)))
-     (when ready (return ready)))
-   (when timeout (return nil))
-   (sleep 0.1)))
+
+;;;;  Locks 
 
-;; Note: Usually we can't interrupt PEEK-CHAR cleanly.
-(defun wait-for-one-stream (stream timeout)
-  (ecase timeout
-    ((nil)
-     (cond ((check-slime-interrupts) :interrupt)
-           (t (peek-char nil stream nil nil) 
-              (list stream))))
-    ((t) 
-     (let ((c (read-char-no-hang stream nil nil)))
-       (cond (c 
-              (unread-char c stream) 
-              (list stream))
-             (t '()))))))
+;; Please use locks only in swank-gray.lisp.  Locks are too low-level
+;; for our taste.
 
-(defun stream-readable-p (stream)
-  (let ((c (read-char-no-hang stream nil :eof)))
-    (cond ((not c) nil)
-          ((eq c :eof) t)
-          (t (unread-char c stream) t))))
+(definterface make-lock (&key name)
+   "Make a lock for thread synchronization.
+Only one thread may hold the lock (via CALL-WITH-LOCK-HELD) at a time
+but that thread may hold it more than once."
+   (declare (ignore name))
+   :null-lock)
 
-(definterface toggle-trace (spec)
-  "Toggle tracing of the function(s) given with SPEC.
-SPEC can be:
- (setf NAME)                            ; a setf function
- (:defmethod NAME QUALIFIER... (SPECIALIZER...)) ; a specific method
- (:defgeneric NAME)                     ; a generic function with all methods
- (:call CALLER CALLEE)                  ; trace calls from CALLER to CALLEE.
- (:labels TOPLEVEL LOCAL) 
- (:flet TOPLEVEL LOCAL) ")
+(definterface call-with-lock-held (lock function)
+   "Call FUNCTION with LOCK held, queueing if necessary."
+   (declare (ignore lock)
+            (type function function))
+   (funcall function))
 
 
 ;;;; Weak datastructures
@@ -1482,18 +1507,7 @@ RESTART-FUNCTION, if non-nil, should be called when the image is loaded.")
 RESTART-FUNCTION, if non-nil, should be called when the image is loaded.
 COMPLETION-FUNCTION, if non-nil, should be called after saving the image.")
 
-;;; Codepoint length
-
-(definterface codepoint-length (string)
-  "Return the number of codepoints in STRING.
-With some Lisps, like cmucl, LENGTH returns the number of UTF-16 code
-units, but other Lisps return the number of codepoints. The slime
-protocol wants string lengths in terms of codepoints."
-  (length string))
-
-;;; Timeouts
-
-(definterface call-with-io-timeout (function &key seconds)
-  "Calls function with the specified IO timeout."
-  (declare (ignore seconds))
-  (funcall function))
+(defun deinit-log-output ()
+  ;; Can't hang on to an fd-stream from a previous session.
+  (setf (symbol-value (find-symbol "*LOG-OUTPUT*" 'swank))
+        nil))
