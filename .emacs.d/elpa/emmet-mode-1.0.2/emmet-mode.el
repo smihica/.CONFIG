@@ -3,10 +3,10 @@
 ;; Copyright (C) 2013-     Shin Aoyama
 ;; Copyright (C) 2009-2012 Chris Done
 
-;; Version: 1.0.0
+;; Version: 1.0.4
 ;; Author: Shin Aoyama <smihica@gmail.com>
 ;; URL: https://github.com/smihica/emmet
-;; Last-Updated: 2013-06-23 Sun
+;; Last-Updated: 2013-09-10 Tue
 ;; Keywords: convenience
 
 ;; This file is free software; you can redistribute it and/or modify
@@ -65,9 +65,9 @@
 ;;
 ;;; Code:
 
-(defconst emmet-mode:version "1.0.0")
+(defconst emmet-mode:version "1.0.4")
 
-(eval-when-compile (require 'cl))
+(require 'cl)
 
 (defmacro emmet-defparameter (symbol &optional initvalue docstring)
   `(progn
@@ -982,7 +982,7 @@ tbl) tbl)
 tbl) tbl)
 (puthash "div" (let ((tbl (make-hash-table :test 'equal)))
 (puthash "selfClosing" nil tbl)
-(puthash "block" t tbl)
+(puthash "block" nil tbl)
 tbl) tbl)
 (puthash "dir" (let ((tbl (make-hash-table :test 'equal)))
 (puthash "selfClosing" nil tbl)
@@ -3338,7 +3338,7 @@ tbl))
                                       (replace-regexp-in-string "    " tab markup)))))
 
 (defun emmet-transform (input)
-  (if (eql major-mode 'css-mode)
+  (if (memq major-mode '(css-mode scss-mode sass-mode))
       (emmet-css-transform input)
     (emmet-html-transform input)))
 
@@ -3375,9 +3375,14 @@ For more information see `emmet-mode'."
             (let ((markup (emmet-transform (first expr))))
               (when markup
                 (let ((pretty (emmet-prettify markup (current-indentation))))
-                  (save-excursion
+                  (when pretty
                     (delete-region (second expr) (third expr))
-                    (emmet-insert-and-flash pretty))))))))))
+                    (emmet-insert-and-flash pretty)
+                    (when (and emmet-move-cursor-after-expanding (emmet-html-text-p markup))
+                      (let ((p (point)))
+                        (goto-char
+                         (+ (- p (length pretty))
+                            (emmet-html-next-insert-point pretty))))))))))))))
 
 (defvar emmet-mode-keymap nil
   "Keymap for emmet minor mode.")
@@ -3437,8 +3442,6 @@ See also `emmet-expand-line'."
            (buffer-substring (second expr) (point))
            (second expr) (point))))))
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Real-time preview
 ;;
@@ -3470,6 +3473,9 @@ See also `emmet-expand-line'."
     (define-key map [(control ?g)] 'emmet-preview-abort)
     map))
 
+(defun emmet-html-text-p (markup)
+  (string-match "^[\s|\t|\n|\r]*<.*$" markup))
+
 (defun emmet-preview-accept ()
   (interactive)
   (let ((ovli emmet-preview-input))
@@ -3480,8 +3486,45 @@ See also `emmet-expand-line'."
              (markup (emmet-preview-transformed indent)))
         (when markup
           (delete-region (line-beginning-position) (overlay-end ovli))
-          (emmet-insert-and-flash markup)))))
+          (emmet-insert-and-flash markup)
+          (when (and emmet-move-cursor-after-expanding (emmet-html-text-p markup))
+            (let ((p (point)))
+              (goto-char
+               (+ (- p (length markup))
+                  (emmet-html-next-insert-point markup)))))))))
   (emmet-preview-abort))
+
+(defun emmet-html-next-insert-point (str)
+  (let ((intag t)    (instring nil)
+        (last-c nil) (c nil)
+        (rti 0))
+    (loop for i to (1- (length str)) do
+          (setq last-c c)
+          (setq c (elt str i))
+          (case c
+            (?\" (if (not (= last-c ?\\))
+                     (progn (setq instring (not instring))
+                            (when (and emmet-move-cursor-between-quotes
+                                       (not instring)
+                                       (= last-c ?\"))
+                              (return i)))))
+            (?>  (if (not instring)
+                     (if intag
+                         (if (= last-c ?/) (return (1+ i))
+                           (progn (setq intag nil)
+                                  (setq rti (1+ i))))
+                       (return i)))) ;; error?
+            (?<  (if (and (not instring) (not intag))
+                     (setq intag t)))
+            (?/  (if (and intag
+                          (not instring)
+                          (= last-c ?<))
+                     (return rti)))
+            (t
+             (if (memq c '(?\t ?\n ?\r ?\s))
+                 (progn (setq c last-c))
+               (if (and (not intag) (not instring))
+                   (return rti))))))))
 
 (defvar emmet-flash-ovl nil)
 (make-variable-buffer-local 'emmet-flash-ovl)
@@ -3503,6 +3546,18 @@ This determines how `emmet-expand-line' works by default."
 Set this to a negative number if you do not want flashing the
 expansion after insertion."
   :type '(number :tag "Seconds")
+  :group 'emmet)
+
+(defcustom emmet-move-cursor-after-expanding t
+  "If non-nil the the cursor position is
+moved to before the first closing tag when the exp was expanded."
+  :type 'boolean
+  :group 'emmet)
+
+(defcustom emmet-move-cursor-between-quotes nil
+  "If emmet-move-cursor-after-expands is non-nil and this is non-nil then
+cursor position will be moved to after the first quote."
+  :type 'boolean
   :group 'emmet)
 
 (defun emmet-insert-and-flash (markup)

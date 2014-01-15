@@ -6,6 +6,11 @@
                  "http://marmalade-repo.org/packages/"))
   (package-initialize))
 
+;; enable evil
+;; (require 'evil)
+;; (evil-mode 1)
+;; (setq evil-esc-delay 0.00)
+
 ;;coding
 (set-language-environment 'utf-8)
 (set-default-coding-systems 'utf-8-unix)
@@ -172,6 +177,7 @@
 (add-hook 'emmet-mode-hook (lambda () (setq emmet-indentation 2)))
 
 (append-auto-mode-alist "\\.mako$" 'html-mode) ;; pyramid. (python)
+(setq-default emmet-preview-default nil)
 
 ;; css
 ;;(defmode css-mode "\\.css$")
