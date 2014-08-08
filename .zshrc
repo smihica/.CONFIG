@@ -101,7 +101,6 @@ freebsd*)
     ;;
 darwin*)
     alias ls="ls -G -w"
-    # alias emacs="emacs-24.3"
     alias vim="vi"
     ;;
 linux*)
@@ -110,8 +109,8 @@ linux*)
 esac
 
 # keychain
-keychain ~/.ssh/id_rsa
-source ~/.keychain/${HOST}-sh
+#keychain ~/.ssh/id_rsa
+#source ~/.keychain/${HOST}-sh
 
 # sbcl
 export SBCL_HOME=~/opt/sbcl/lib/sbcl
