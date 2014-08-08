@@ -1,3 +1,3 @@
 #/bin/bash
 
-tmux list-sessions | perl -e '@x=(); while (<>) { $_ =~ s/:.+\]//; $_ =~ s/(.*?) \(attached\)/#[bg=yellow,fg=black]$1#[bg=#FFFFFF,fg=black]/; chomp($_); push(@x, $_); }; print join("|", @x)'
+tmux list-sessions | perl -e '@x=(); while (<>) { $_ =~ s/:.+\]//; $_ =~ s/(.*?) \(attached\)/#[bg=yellow,fg=black]$1#[bg=white,fg=black]/; chomp($_); push(@x, $_); }; print join("|", @x)'
