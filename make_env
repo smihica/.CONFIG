@@ -19,10 +19,7 @@ for f in \
 	.zshrc \
 	.termcap \
 	.tmux.conf \
-	.vim \
-	.vimrc \
 	.emacs.d \
-	.gvimrc
 do
 
 	link_dotfile ${f} ${f}
@@ -58,7 +55,6 @@ is not linked.
 INSTALL:
 	zsh
 	keychain
-	vim
 	emacs
 	tmux
 "
