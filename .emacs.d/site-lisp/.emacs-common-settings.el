@@ -27,9 +27,6 @@
   (setq file-name-coding-system 'utf-8-unix)
   (setq locale-coding-system 'utf-8-unix)))
 
-;;slime and shell buffer size
-(setq-default comint-buffer-maximum-size 100)
-
 ;;backspace
 (global-set-key "\C-h" 'backward-delete-char)
 
@@ -39,12 +36,19 @@
 ;;indent
 (setq-default indent-tabs-mode nil)
 
+;;disable startup message
+(setq inhibit-startup-screen t)
+
+;; menu bar
+(menu-bar-mode 0)
+
 ;;trailing-whitespace
 (when (boundp 'show-trailing-whitespace)
   (setq-default show-trailing-whitespace t))
 
 ;;()paren-mode
 (show-paren-mode t)
+(setq show-paren-delay 0)
 
 ;; line-truncate
 (setq-default truncate-lines t)
@@ -59,6 +63,7 @@
 ;; cua-mode
 (cua-mode t)
 (setq cua-enable-cua-keys nil)
+(global-set-key (kbd "C-RET") 'cua-set-rectangle-mark)
 
 ;;backupFile
 (defvar backup-files-dir (expand-file-name "~/.emacs.d/backup-files"))
@@ -121,6 +126,18 @@
 ;;; modes
 ;;;
 
+;; terminal
+(add-hook 'shell-mode-hook
+  (lambda ()
+    (setq comint-buffer-maximum-size 5000)
+    (setq comint-process-echoes nil)
+    (add-to-list 'comint-output-filter-functions
+                 'comint-truncate-buffer)
+    ;; for node-js repl in emacs.
+    (add-to-list 'comint-preoutput-filter-functions
+                 (lambda (output)
+                   (replace-regexp-in-string "\\(?:\\[[0-9][GKJ]\\|\\[\\?[0-9][lh]\\|=\\|>\\|\\[J\\)" "" output)))))
+
 ;; ;; term-mode
 ;; (setq system-uses-terminfo nil)
 ;; (setq shell-file-name
@@ -138,25 +155,6 @@
 ;;           (lambda ()
 ;;             (setq show-trailing-whitespace nil)))
 
-;; ;; shell-mode
-;; (autoload
-;;   'ansi-color-for-comint-mode-on "ansi-color"
-;;   "Set `ansi-color-for-comint-mode' to t." t)
-;; (setq ansi-color-names-vector
-;;       ["#000000"           ; black
-;;        "#ff6565"           ; red
-;;        "#93d44f"           ; green
-;;        "#eab93d"           ; yellow
-;;        "#204a87"           ; blue
-;;        "#ce5c00"           ; magenta
-;;        "#89b6e2"           ; cyan
-;;        "#ffffff"]          ; white
-;;       )
-;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-;; (add-hook 'comint-mode-hook
-;;           (lambda ()
-;;             (setq show-trailing-whitespace nil)
-;;             (setq comint-process-echoes t)))
 
 ;; javascript
 (add-hook
@@ -406,9 +404,3 @@
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default)
-
-;; for node-js repl in emacs.
-(add-to-list
- 'comint-preoutput-filter-functions
- (lambda (output)
-   (replace-regexp-in-string "\\(?:\\[[0-9][GKJ]\\|\\[\\?[0-9][lh]\\|=\\|>\\|\\[J\\)" "" output)))

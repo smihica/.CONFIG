@@ -20,6 +20,7 @@ skk-dic/skki1_0u.dic
 .emacs.d/temp-files*
 .emacs.d/lib
 .emacs.d/ac-comphist.dat
+.emacs.d/eshell
 *.elc
 CVS
 .cvsignore
