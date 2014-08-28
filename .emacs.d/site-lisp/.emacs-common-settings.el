@@ -404,3 +404,17 @@
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default)
+
+;; spec-id generator
+(defun random-elt (src)
+  (let ((l (length src)))
+    (elt src (random l))))
+
+(defun random-str (l)
+  (concat (loop for i from 1 to l collect (random-elt "abcdefghijklmnopqrstuvwxyz0123456789"))))
+
+(defun insert-spec-id (length)
+  (interactive "P")
+  (insert "[!" (random-str (or length 5)) "] "))
+
+(global-set-key "\C-c\C-b" 'insert-spec-id)
