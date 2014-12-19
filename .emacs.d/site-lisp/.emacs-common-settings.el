@@ -266,6 +266,10 @@
 ;yacc/lex
 (append-auto-mode-alist "\\.l$" 'c-mode)
 
+;; bgscript-mode
+(require 'bgscript-mode)
+(append-auto-mode-alist "\\.bgs$" 'bgscript-mode)
+
 ;; slime
 (require 'slime)
 (setq inferior-lisp-program "sbcl")
