@@ -2,8 +2,7 @@
 (when (>= emacs-major-version 24)
   (require 'package)
   (add-to-list 'package-archives
-               '("marmalade" .
-                 "http://marmalade-repo.org/packages/"))
+               '("melpa" . "http://melpa.milkbox.net/packages/") t)
   (package-initialize))
 
 ;; enable evil
@@ -173,6 +172,7 @@
 (add-hook 'sgml-mode-hook 'emmet-mode)
 (add-hook 'css-mode-hook  'emmet-mode)
 (add-hook 'emmet-mode-hook (lambda () (setq emmet-indentation 2)))
+(custom-set-variables '(emmet-move-cursor-between-quotes t))
 
 (append-auto-mode-alist "\\.mako$" 'html-mode) ;; pyramid. (python)
 (setq-default emmet-preview-default nil)
@@ -232,6 +232,7 @@
 ;; obj-C
 (append-auto-mode-alist "\\.m$" 'objc-mode)
 (append-auto-mode-alist "\\.mm$" 'objc-mode)
+(append-auto-mode-alist "\\.hm$" 'objc-mode)
 (add-hook 'objc-mode
           '(lambda ()
              (c-set-style "BSD")
