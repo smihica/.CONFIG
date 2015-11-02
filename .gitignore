@@ -21,6 +21,7 @@ skk-dic/skki1_0u.dic
 .emacs.d/lib
 .emacs.d/ac-comphist.dat
 .emacs.d/eshell
+.emacs.d/elpa
 *.elc
 CVS
 .cvsignore

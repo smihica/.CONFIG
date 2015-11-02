@@ -43,4 +43,12 @@ PATH="$BINDIR:$PATH"
 #
 export TERM="xterm-color"
 
-export PATH="/Applications/microchip/xc8/v1.20/bin":$PATH
+export PATH=$PATH:"/Applications/microchip/xc8/v1.20/bin"
+export PATH=$PATH:"/Applications/microchip/xc16/v1.23/bin"
+
+# Java
+export PATH=$PATH:"/usr/local/apache-maven-3.2.5/bin"
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home"
+
+# android
+export PATH=$PATH:"$HOME/Library/Android/sdk/platform-tools"

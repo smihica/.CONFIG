@@ -126,9 +126,10 @@
 ;;;
 
 ;; terminal
+(defvar terminal-buffer-maximum-size 10000)
 (add-hook 'shell-mode-hook
   (lambda ()
-    (setq comint-buffer-maximum-size 5000)
+    (setq comint-buffer-maximum-size (- terminal-buffer-maximum-size 1))
     (setq comint-process-echoes nil)
     (add-to-list 'comint-output-filter-functions
                  'comint-truncate-buffer)
@@ -263,6 +264,7 @@
 ;; sass
 (require 'sass-mode)
 (append-auto-mode-alist "\\.sass$" 'sass-mode)
+(append-auto-mode-alist "\\.scss$" 'sass-mode)
 
 ;yacc/lex
 (append-auto-mode-alist "\\.l$" 'c-mode)
@@ -409,6 +411,7 @@
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default)
+(global-auto-complete-mode t)
 
 ;; spec-id generator
 (defun random-elt (src)
@@ -423,3 +426,41 @@
   (insert "[!" (random-str (or length 5)) "] "))
 
 (global-set-key "\C-c\C-b" 'insert-spec-id)
+
+;; jsx, es6/7
+(add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+    ad-do-it))
+
+;; flycheck
+(require 'flycheck)
+(flycheck-define-checker jsxhint-checker
+  "A JSX syntax and style checker based on JSXHint."
+  :command ("jsxhint" source)
+  :error-patterns
+  ((error line-start (1+ nonl) ": line " line ", col " column ", " (message) line-end))
+  :modes (web-mode))
+
+(add-hook
+ 'web-mode-hook
+
+ (lambda ()
+   (auto-complete-mode t)
+   (setq web-mode-attr-indent-offset   nil)
+   (setq web-mode-markup-indent-offset 2)
+   (setq web-mode-css-indent-offset    2)
+   (setq web-mode-code-indent-offset   2)
+   (setq web-mode-sql-indent-offset    2)
+   (setq indent-tabs-mode              nil)
+   (setq tab-width                     4)
+   (local-unset-key "\M-;")
+   (when (equal web-mode-content-type "jsx")
+     ;; enable flycheck
+     (flycheck-select-checker 'jsxhint-checker)
+     (flycheck-mode))))
+
+;; haskell
+(add-hook 'haskell-mode-hook 'haskell-indentation-mode)
