@@ -85,6 +85,10 @@
 (global-unset-keys 
  "\e\e\e"
  "\C-\\"
+ "\M-j"
+ "\M-k"
+ "\M-l"
+ "\M-i"
 )
 (global-set-keys
  "\M-9" 'enlarge-window-horizontally
@@ -104,6 +108,10 @@
  "\M-." 'end-of-buffer
  "\M-," 'beginning-of-buffer
  "\C-\M-]" 'comment-or-uncomment-region
+ "\M-j" 'windmove-left
+ "\M-k" 'windmove-down
+ "\M-l" 'windmove-right
+ "\M-i" 'windmove-up
 )
 
 ;;; dabbrev-expand-multiple
@@ -270,8 +278,8 @@
 (append-auto-mode-alist "\\.l$" 'c-mode)
 
 ;; bgscript-mode
-(require 'bgscript-mode)
-(append-auto-mode-alist "\\.bgs$" 'bgscript-mode)
+;(require 'bgscript-mode)
+;(append-auto-mode-alist "\\.bgs$" 'bgscript-mode)
 
 ;; slime
 (require 'slime)
@@ -464,3 +472,74 @@
 
 ;; haskell
 (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+
+
+;; window
+(defun split-window-below-ratio (w proportion)
+  (split-window w (round (* proportion (window-height w)))))
+
+(defun split-window-right-ratio (w proportion)
+  (split-window w (round (* proportion (window-width w))) t))
+
+(defun ws2 ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (split-window-right-ratio w0 0.50)))
+
+(defun ws3 ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w1 (split-window-right-ratio w0 0.33)))
+      (split-window-right-ratio w1 0.50))))
+
+(defun ws4 ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w2 (split-window-right-ratio w0 0.50)))
+      (split-window-below-ratio w2 0.50)
+      (split-window-below-ratio w0 0.50))))
+
+(defun ws4v ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w2 (split-window-right-ratio w0 0.50)))
+      (split-window-right-ratio w2 0.50)
+      (split-window-right-ratio w0 0.50))))
+
+(defun ws5 ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w1 (split-window-right-ratio w0 0.33)))
+      (let ((w2 (split-window-right-ratio w1 0.50)))
+        (split-window-below-ratio w0 0.50)
+        (split-window-below-ratio w1 0.50)))))
+
+(defun ws6 ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w1 (split-window-right-ratio w0 0.33)))
+      (let ((w2 (split-window-right-ratio w1 0.50)))
+        (split-window-below-ratio w0 0.50)
+        (split-window-below-ratio w1 0.50)
+        (split-window-below-ratio w2 0.50)))))
+
+(defun ws7 ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w2 (split-window-right-ratio w0 0.50)))
+      (let ((w1 (split-window-right-ratio w0 0.50)))
+        (let ((w3 (split-window-right-ratio w2 0.50)))
+          (split-window-below-ratio w0 0.50)
+          (split-window-below-ratio w1 0.50)
+          (split-window-below-ratio w2 0.50))))))
+
+(defun ws8 ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w2 (split-window-right-ratio w0 0.50)))
+      (let ((w1 (split-window-right-ratio w0 0.50)))
+        (let ((w3 (split-window-right-ratio w2 0.50)))
+          (split-window-below-ratio w0 0.50)
+          (split-window-below-ratio w1 0.50)
+          (split-window-below-ratio w2 0.50)
+          (split-window-below-ratio w3 0.50))))))
