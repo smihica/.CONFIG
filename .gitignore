@@ -25,3 +25,4 @@ skk-dic/skki1_0u.dic
 *.elc
 CVS
 .cvsignore
+configstore
