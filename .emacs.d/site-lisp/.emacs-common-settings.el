@@ -85,10 +85,10 @@
 (global-unset-keys 
  "\e\e\e"
  "\C-\\"
+ "\M-h"
  "\M-j"
- "\M-k"
  "\M-l"
- "\M-i"
+ "\M-k"
 )
 (global-set-keys
  "\M-9" 'enlarge-window-horizontally
@@ -96,9 +96,9 @@
  "\M-7" 'shrink-window
  "\M-6" 'shrink-window-horizontally
  "\M-5" 'moccur-grep-find
- "\M-4" 'query-replace-regexp
+ "\M-4" 'foreign-regexp/query-replace
  "\M-3" 'query-replace
- "\M-;" 'other-window
+ "\M-2" 'foreign-regexp/isearch-forward
  "\M-'" 'dabbrev-expand-multiple
  "\C-x\C-k" 'kill-buffer
  "\C-xk" 'kill-buffer
@@ -108,10 +108,10 @@
  "\M-." 'end-of-buffer
  "\M-," 'beginning-of-buffer
  "\C-\M-]" 'comment-or-uncomment-region
- "\M-j" 'windmove-left
- "\M-k" 'windmove-down
+ "\M-h" 'windmove-left
+ "\M-j" 'windmove-down
  "\M-l" 'windmove-right
- "\M-i" 'windmove-up
+ "\M-k" 'windmove-up
 )
 
 ;;; dabbrev-expand-multiple
@@ -481,6 +481,14 @@
 (defun split-window-right-ratio (w proportion)
   (split-window w (round (* proportion (window-width w))) t))
 
+(defun ws5x ()
+  (interactive)
+  (let ((w0 (selected-window)))
+    (let ((w1 (split-window-right-ratio w0 0.40)))
+      (let ((w2 (split-window-right-ratio w1 0.66)))
+        (split-window-below-ratio w0 0.50)
+        (split-window-below-ratio w1 0.50)))))
+
 (defun ws2 ()
   (interactive)
   (let ((w0 (selected-window)))
@@ -543,3 +551,12 @@
           (split-window-below-ratio w1 0.50)
           (split-window-below-ratio w2 0.50)
           (split-window-below-ratio w3 0.50))))))
+
+;; disable auto indentation when newline
+(when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
+
+;; regexp
+(require 'foreign-regexp)
+(custom-set-variables
+ '(foreign-regexp/regexp-type 'javascript) ;; ruby or perl available
+ '(reb-re-syntax 'foreign-regexp/re-builder/query-replace-on-target-buffer))
