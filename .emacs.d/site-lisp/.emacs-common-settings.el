@@ -129,6 +129,10 @@
 ;;; auto buffer reload when the file is updated by other program.
 (global-auto-revert-mode 1)
 
+;; flycheck
+(require 'flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
 ;;;
 ;;; modes
 ;;;
@@ -264,6 +268,13 @@
 ;; asm
 (require 'gas-mode)
 (append-auto-mode-alist "\\.asm$" 'gas-mode)
+
+;; rust
+(require 'rust-mode)
+(append-auto-mode-alist "\\.rs$" 'rust-mode)
+(add-hook 'rust-mode-hook
+          (lambda ()
+            (flycheck-mode)))
 
 ;; haXe
 ;; (require 'haxe-mode)
@@ -435,26 +446,25 @@
 
 (global-set-key "\C-c\C-b" 'insert-spec-id)
 
+;; go
+(add-hook
+ 'go-mode-hook
+ (lambda ()
+   (setq indent-tabs-mode t)
+   (setq tab-width        4)
+   (auto-complete-mode t)
+   (flycheck-mode)))
+
 ;; jsx, es6/7
-(add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
   (if (equal web-mode-content-type "jsx")
       (let ((web-mode-enable-part-face nil))
         ad-do-it)
     ad-do-it))
 
-;; flycheck
-(require 'flycheck)
-(flycheck-define-checker jsxhint-checker
-  "A JSX syntax and style checker based on JSXHint."
-  :command ("jsxhint" source)
-  :error-patterns
-  ((error line-start (1+ nonl) ": line " line ", col " column ", " (message) line-end))
-  :modes (web-mode))
-
 (add-hook
  'web-mode-hook
-
  (lambda ()
    (auto-complete-mode t)
    (setq web-mode-attr-indent-offset   nil)
@@ -465,14 +475,11 @@
    (setq indent-tabs-mode              nil)
    (setq tab-width                     4)
    (local-unset-key "\M-;")
-   (when (equal web-mode-content-type "jsx")
-     ;; enable flycheck
-     (flycheck-select-checker 'jsxhint-checker)
-     (flycheck-mode))))
+   (flycheck-add-mode 'javascript-eslint 'web-mode)
+   (flycheck-mode)))
 
 ;; haskell
 (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
-
 
 ;; window
 (defun split-window-below-ratio (w proportion)

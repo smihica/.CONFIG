@@ -14,10 +14,22 @@ LIBDIR="$HOME/opt/lib"
 ARC="-m64" #"-arch i386"
 
 case "${OSTYPE}" in
+netbsd*)
+    ;;
 freebsd*)
     ;;
 darwin*)
-    PATH="/usr/local/bin/:$PATH" # brew
+    export PATH="/usr/local/bin/:$PATH" # brew
+    # microchip
+    export PATH=$PATH:"/Applications/microchip/xc8/v1.20/bin"
+    export PATH=$PATH:"/Applications/microchip/xc16/v1.23/bin"
+    # Java
+    export PATH=$PATH:"/usr/local/apache-maven-3.2.5/bin"
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home"
+    # android
+    export PATH=$PATH:"$HOME/Library/Android/sdk/platform-tools"
+    # nodebrew
+    export PATH=$PATH:"$HOME/.nodebrew/current/bin"
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"
@@ -42,13 +54,3 @@ PATH="$BINDIR:$PATH"
 # TERM
 #
 export TERM="xterm-color"
-
-export PATH=$PATH:"/Applications/microchip/xc8/v1.20/bin"
-export PATH=$PATH:"/Applications/microchip/xc16/v1.23/bin"
-
-# Java
-export PATH=$PATH:"/usr/local/apache-maven-3.2.5/bin"
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home"
-
-# android
-export PATH=$PATH:"$HOME/Library/Android/sdk/platform-tools"
