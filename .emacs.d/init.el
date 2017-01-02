@@ -40,6 +40,9 @@
  ;; If there is more than one, they won't work right.
  '(emmet-move-cursor-between-quotes t)
  '(foreign-regexp/regexp-type (quote javascript))
+ '(package-selected-packages
+   (quote
+    (slime scala-mode sass-mode rust-mode flycheck emmet-mode clojure-mode)))
  '(reb-re-syntax
    (quote foreign-regexp/re-builder/query-replace-on-target-buffer))
  '(safe-local-variable-values
