@@ -1,3 +1,6 @@
+
+;;; Code:
+
 ;; marmalade
 (when (>= emacs-major-version 24)
   (require 'package)
@@ -15,7 +18,7 @@
 (set-default-coding-systems 'utf-8-unix)
 (set-terminal-coding-system 'utf-8-unix)
 (set-keyboard-coding-system 'utf-8-unix)
-(setq default-buffer-file-coding-system 'utf-8-unix)
+(setq buffer-file-coding-system 'utf-8-unix)
 (prefer-coding-system 'utf-8-unix)
 (cond
  ((or (eq window-system 'mac) (eq window-system 'ns))
@@ -69,27 +72,21 @@
 (defvar temp-files-dir (expand-file-name "~/.emacs.d/temp-files"))
 
 (setq make-backup-files t)
-;(setq backup-by-copying t)
-;(setq backup-by-copying-when-mismatch t)
-;(setq backup-by-copying-when-linked t)
 (setq backup-directory-alist (cons (cons "\\.*$" backup-files-dir) nil))
-;(setq auto-save-file-name-transforms `(("\\.*$" ,(concat temp-files-dir "/\\1") t)))
-;(setq version-control t)
-;(setq-default delete-old-versions t)
 
 ;; color-moccur
 (require 'color-moccur)
 (require 'moccur-edit)
 
 ;; keyBind
-(global-unset-keys 
+(global-unset-keys
  "\e\e\e"
  "\C-\\"
  "\M-h"
  "\M-j"
  "\M-l"
- "\M-k"
-)
+ "\M-k")
+
 (global-set-keys
  "\M-9" 'enlarge-window-horizontally
  "\M-8" 'enlarge-window
@@ -111,8 +108,7 @@
  "\M-h" 'windmove-left
  "\M-j" 'windmove-down
  "\M-l" 'windmove-right
- "\M-k" 'windmove-up
-)
+ "\M-k" 'windmove-up)
 
 ;;; dabbrev-expand-multiple
 (require 'dabbrev-expand-multiple)
@@ -166,18 +162,6 @@
 ;; (add-hook 'term-mode-hook
 ;;           (lambda ()
 ;;             (setq show-trailing-whitespace nil)))
-
-
-;; javascript
-(add-hook
- 'js-mode-hook
- (lambda ()
-   ;(setq javascript-indent-level 2)
-   ;(setq espresso-indent-level 2)
-   (setq js-indent-level 2)
-   ;(slime-js-minor-mode 1)
-   ))
-(append-auto-mode-alist "\\.json$" 'js-mode)
 
 ;; html
 (require 'emmet-mode)
@@ -285,7 +269,7 @@
 (append-auto-mode-alist "\\.sass$" 'sass-mode)
 (append-auto-mode-alist "\\.scss$" 'sass-mode)
 
-;yacc/lex
+;; yacc/lex
 (append-auto-mode-alist "\\.l$" 'c-mode)
 
 ;; bgscript-mode
@@ -317,7 +301,7 @@
      ; slime-js
      slime-repl
      ))
- 
+
 (defun slime-kill-all-buffers ()
   "Kill all the slime related buffers. This is only used by the
   repl command sayoonara."
@@ -327,13 +311,13 @@
             (string-match "^\\*slime-repl .*\\*$" (buffer-name buf))
             (string-match "^\\*sldb .*\\*$" (buffer-name buf)))
     (kill-buffer buf))))
- 
+
 (defun slime-quit ()
   (interactive)
   (progn
     (if (slime-connected-p) (slime-disconnect))
     (slime-kill-all-buffers)))
- 
+
 (add-hook 'lisp-mode-hook
   (lambda ()
    (progn
@@ -342,7 +326,7 @@
      (local-set-key "\C-\M-j" 'slime-insert-balanced-comments)
      (local-set-key "\C-\M-l" 'slime-remove-balanced-comments)
      (local-set-key "\C-c\C-q" 'slime-quit))))
- 
+
 (add-to-list 'slime-lisp-implementations `(sbcl (,(executable-find "sbcl")) :coding-system utf-8-unix))
 
 ;;lisp-mode
@@ -394,57 +378,8 @@
 (setq arc-program-name "/home/nagayoru/svn/arc/arc.sh")
 (defmode arc-mode "\\.arc$")
 
-;arduino
+;; arduino
 (append-auto-mode-alist "\\.pde$" 'c++-mode)
-
-;;downcase upcase -region enable
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
-
-;; wdired
-(require 'wdired)
-(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
-
-;; auto-install
-;(require 'auto-install)
-;(setq auto-install-directory "~/.emacs.d/auto-install-site/")
-;;(auto-install-update-emacswiki-package-name t)
-;(auto-install-compatibility-setup)
-
-;; clojure
-(require 'clojure-mode)
-(autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
-
-;; typescript
-;; (require 'typescript)
-;; (defmode typescript-mode "\\.ts$"
-;;   (add-hook 'typescript-mode-hook
-;;             (lambda ()
-;;               (setq tab-width 4)
-;;               (setq typescript-indent-level 2)
-;;               (setq c-tab-always-indent nil)
-;;               (setq show-trailing-whitespace t))))
-
-;; auto-complete
-(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
-(ac-config-default)
-(global-auto-complete-mode t)
-
-;; spec-id generator
-(defun random-elt (src)
-  (let ((l (length src)))
-    (elt src (random l))))
-
-(defun random-str (l)
-  (concat (loop for i from 1 to l collect (random-elt "abcdefghijklmnopqrstuvwxyz0123456789"))))
-
-(defun insert-spec-id (length)
-  (interactive "P")
-  (insert "[!" (random-str (or length 5)) "] "))
-
-(global-set-key "\C-c\C-b" 'insert-spec-id)
 
 ;; go
 (add-hook
@@ -457,6 +392,10 @@
 
 ;; jsx, es6/7
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb$"  . web-mode))
+(add-to-list 'auto-mode-alist '("\\.ejs$"  . web-mode))
+
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
   (if (equal web-mode-content-type "jsx")
       (let ((web-mode-enable-part-face nil))
@@ -478,8 +417,70 @@
    (flycheck-add-mode 'javascript-eslint 'web-mode)
    (flycheck-mode)))
 
+
+(add-hook
+ 'js-mode-hook
+ (lambda ()
+   (setq js-indent-level 2)))
+
+(append-auto-mode-alist "\\.json$" 'js-mode)
+
 ;; haskell
 (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+
+;; clojure
+(require 'clojure-mode)
+(autoload 'clojure-mode "clojure-mode" "A major mode for Clojure" t)
+
+;; scala
+(require 'scala-mode)
+(autoload 'scala-mode "scala-mode" "A major mode for Scala" t)
+
+;; typescript
+;; (require 'typescript)
+;; (defmode typescript-mode "\\.ts$"
+;;   (add-hook 'typescript-mode-hook
+;;             (lambda ()
+;;               (setq tab-width 4)
+;;               (setq typescript-indent-level 2)
+;;               (setq c-tab-always-indent nil)
+;;               (setq show-trailing-whitespace t))))
+
+
+;;downcase upcase -region enable
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
+;; wdired
+(require 'wdired)
+(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
+
+;; auto-install
+;(require 'auto-install)
+;(setq auto-install-directory "~/.emacs.d/auto-install-site/")
+;;(auto-install-update-emacswiki-package-name t)
+;(auto-install-compatibility-setup)
+
+;; auto-complete
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
+(ac-config-default)
+(global-auto-complete-mode t)
+
+;; spec-id generator
+(defun random-elt (src)
+  (let ((l (length src)))
+    (elt src (random l))))
+
+(defun random-str (l)
+  (concat (loop for i from 1 to l collect (random-elt "abcdefghijklmnopqrstuvwxyz0123456789"))))
+
+(defun insert-spec-id (length)
+  (interactive "P")
+  (insert "[!" (random-str (or length 5)) "] "))
+
+(global-set-key "\C-c\C-b" 'insert-spec-id)
 
 ;; window
 (defun split-window-below-ratio (w proportion)

@@ -25,7 +25,7 @@ darwin*)
     export PATH=$PATH:"/Applications/microchip/xc16/v1.23/bin"
     # Java
     export PATH=$PATH:"/usr/local/apache-maven-3.2.5/bin"
-    export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home"
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/Contents/Home"
     # android
     export PATH=$PATH:"$HOME/Library/Android/sdk/platform-tools"
     # nodebrew
@@ -49,6 +49,9 @@ esac
 #
 BINDIR="$HOME/opt/bin"
 PATH="$BINDIR:$PATH"
+
+# roswell
+PATH="$HOME/.roswell/bin:$PATH"
 
 #
 # TERM

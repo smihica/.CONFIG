@@ -111,6 +111,3 @@ esac
 # keychain
 #keychain ~/.ssh/id_rsa
 #source ~/.keychain/${HOST}-sh
-
-# sbcl
-export SBCL_HOME=~/opt/sbcl/lib/sbcl
