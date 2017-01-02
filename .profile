@@ -9,14 +9,14 @@ export LC_CTYPE=en_US.UTF-8
 #
 # DEV
 #
-INCLUDEDIR="$HOME/opt/include"
-LIBDIR="$HOME/opt/lib"
-ARC="-m64" #"-arch i386"
-
 case "${OSTYPE}" in
 netbsd*)
     ;;
 freebsd*)
+    # export C_INCLUDE_PATH=/usr/local/include/:${C_INCLUDE_PATH}
+    # export CPLUS_INCLUDE_PATH=/usr/local/include/:${CPLUS_INCLUDE_PATH}
+    export PATH="/usr/opt/bin:$PATH" # manual install binaries
+    export PATH="$HOME/.roswell/bin/:$PATH"
     ;;
 darwin*)
     export PATH="/usr/local/bin/:$PATH" # brew
@@ -43,15 +43,6 @@ esac
 #export CFLAGS="-I$INCLUDEDIR $ARC"
 #export CXXFLAGS="-I$INCLUDEDIR $ARC"
 #export LDFLAGS="-L$LIBDIR $ARC"
-
-#
-# PATH
-#
-BINDIR="$HOME/opt/bin"
-PATH="$BINDIR:$PATH"
-
-# roswell
-PATH="$HOME/.roswell/bin:$PATH"
 
 #
 # TERM
