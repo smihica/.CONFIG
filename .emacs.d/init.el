@@ -42,12 +42,13 @@
  '(foreign-regexp/regexp-type (quote javascript))
  '(package-selected-packages
    (quote
-    (slime scala-mode sass-mode rust-mode flycheck emmet-mode clojure-mode)))
+    (ac-slime paredit slime web-mode scala-mode sass-mode racer php-mode macrostep go-mode flymake-jshint flycheck-rust emmet-mode paredit)))
  '(reb-re-syntax
    (quote foreign-regexp/re-builder/query-replace-on-target-buffer))
  '(safe-local-variable-values
    (quote
-    ((web-mode-css-indent-offset . 4)
+    ((c-tab-always-indent)
+     (web-mode-css-indent-offset . 4)
      (web-mode-markup-indent-offset . 4)
      (web-mode-code-indent-offset . 4)
      ((web-mode-code-indent-offset . 4))))))
@@ -56,4 +57,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background "#000000" :foreground "#FFFFFF")))))

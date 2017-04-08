@@ -111,3 +111,9 @@ esac
 # keychain
 #keychain ~/.ssh/id_rsa
 #source ~/.keychain/${HOST}-sh
+
+# emacs
+if [ -n "$INSIDE_EMACS" ]; then
+    export EDITOR=emacsclient
+    unset zle_bracketed_paste
+fi

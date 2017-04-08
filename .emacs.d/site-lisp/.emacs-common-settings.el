@@ -1,12 +1,19 @@
 
+;;; Theme:
+
+(load-theme 'wombat)
+(custom-set-faces '(default ((t (:background "#000000" :foreground "#FFFFFF")))))
+
 ;;; Code:
 
-;; marmalade
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/") t)
-  (package-initialize))
+;; melpa
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/"))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize) ;; You might already have this line
+
 
 ;; enable evil
 ;; (require 'evil)
@@ -111,13 +118,13 @@
  "\M-k" 'windmove-up)
 
 ;;; dabbrev-expand-multiple
-(require 'dabbrev-expand-multiple)
-(setq dabbrev-expand-multiple-select-keys '("a" "s" "d" "f" "g"))
-(add-to-list 'dabbrev-expand-multiple-next-keys "n")
-(add-to-list 'dabbrev-expand-multiple-previous-keys "p")
-(setq dabbrev-expand-multiple-inline-show-face 'underline)
-(setq dabbrev-expand-multiple-inline-show-face nil)
-(setq dabbrev-expand-multiple-use-tooltip nil)
+;;(require 'dabbrev-expand-multiple)
+;;(setq dabbrev-expand-multiple-select-keys '("a" "s" "d" "f" "g"))
+;;(add-to-list 'dabbrev-expand-multiple-next-keys "n")
+;;(add-to-list 'dabbrev-expand-multiple-previous-keys "p")
+;;(setq dabbrev-expand-multiple-inline-show-face 'underline)
+;;(setq dabbrev-expand-multiple-inline-show-face nil)
+;;(setq dabbrev-expand-multiple-use-tooltip nil)
 
 ;;; ignoreing case switch in completion.
 (setq completion-ignore-case t)
@@ -137,6 +144,7 @@
 (defvar terminal-buffer-maximum-size 10000)
 (add-hook 'shell-mode-hook
   (lambda ()
+    (setq show-trailing-whitespace nil)
     (setq comint-buffer-maximum-size (- terminal-buffer-maximum-size 1))
     (setq comint-process-echoes nil)
     (add-to-list 'comint-output-filter-functions
@@ -144,7 +152,9 @@
     ;; for node-js repl in emacs.
     (add-to-list 'comint-preoutput-filter-functions
                  (lambda (output)
-                   (replace-regexp-in-string "\\(?:\\[[0-9][GKJ]\\|\\[\\?[0-9][lh]\\|=\\|>\\|\\[J\\)" "" output)))))
+                   (replace-regexp-in-string "\\(?:\\[[0-9][GKJ]\\|\\[\\?[0-9][lh]\\|=\\|>\\|\\[J\\)" "" output)))
+    (add-to-list 'comint-preoutput-filter-functions
+                 (lambda (output) (replace-regexp-in-string "(B" "" output)))))
 
 ;; ;; term-mode
 ;; (setq system-uses-terminfo nil)
@@ -253,12 +263,53 @@
 (require 'gas-mode)
 (append-auto-mode-alist "\\.asm$" 'gas-mode)
 
+;; company
+(require 'company)
+(setq company-idle-delay 0.1)
+(setq company-minimum-prefix-length 2)
+(progn
+  (set-face-attribute 'company-tooltip nil
+                      :foreground "#CCCCCC" :background "#333333")
+  (set-face-attribute 'company-tooltip-common nil
+                      :foreground "#CCCCCC" :background "#333333")
+  (set-face-attribute 'company-tooltip-common-selection nil
+                      :foreground "#FFFFFF" :background "#444444")
+  (set-face-attribute 'company-tooltip-selection nil
+                      :foreground "#FFFFFF" :background "#444444")
+  (set-face-attribute 'company-preview-common nil
+                      :background nil :foreground "#CCCCCC" :underline t)
+  (set-face-attribute 'company-scrollbar-fg nil
+                      :background "#999999")
+  (set-face-attribute 'company-scrollbar-bg nil
+                      :background "#666666")
+  (set-face-attribute 'company-tooltip-annotation nil
+                      :foreground "#999999"))
+
+(define-key company-active-map (kbd "C-h") nil)
+
+;(define-key company-active-map (kbd "M-n") nil)
+;(define-key company-active-map (kbd "M-p") nil)
+;(define-key company-active-map (kbd "M-j") 'company-select-next)
+;(define-key company-active-map (kbd "M-k") 'company-select-previous)
+
 ;; rust
-(require 'rust-mode)
-(append-auto-mode-alist "\\.rs$" 'rust-mode)
+;;; racerやrustfmt、コンパイラにパスを通す
+(add-to-list 'exec-path (expand-file-name "~/.cargo/bin/"))
+;;; rust-modeでrust-format-on-saveをtにすると自動でrustfmtが走る
+; (eval-after-load "rust-mode" '(setq-default rust-format-on-save t))
+;;; rustのファイルを編集するときにracerとflycheckを起動する
 (add-hook 'rust-mode-hook
           (lambda ()
-            (flycheck-mode)))
+            (racer-mode)
+            (flycheck-rust-setup)))
+;;; racerのeldocサポートを使う
+(add-hook 'racer-mode-hook #'eldoc-mode)
+;;; racerの補完サポートを使う
+(add-hook 'racer-mode-hook
+          (lambda ()
+            (company-mode)
+            (setq company-tooltip-align-annotations t)))
+
 
 ;; haXe
 ;; (require 'haxe-mode)
@@ -276,69 +327,34 @@
 ;(require 'bgscript-mode)
 ;(append-auto-mode-alist "\\.bgs$" 'bgscript-mode)
 
-;; slime
-(require 'slime)
-(setq inferior-lisp-program "sbcl")
-(setq slime-lisp-implementations '())
+;; lisp / slime
+(load (expand-file-name "~/.roswell/helper.el"))
+(setq inferior-lisp-program "ros -Q run")
 (setq slime-net-coding-system 'utf-8-unix)
-(slime-setup
-  '( inferior-slime
-     slime-asdf
-     slime-autodoc
-     slime-banner
-     slime-c-p-c
-     slime-editing-commands
-     slime-fancy-inspector
-     slime-fancy
-     slime-fuzzy
-     slime-parse
-     slime-references
-     slime-scratch
-     slime-tramp
-     slime-typeout-frame
-     slime-xref-browser
-     slime-scheme
-     ; slime-js
-     slime-repl
-     ))
+(append-auto-mode-alist "\\.ros$" 'lisp-mode)
+(defun slime-qlot-exec (directory)
+  (interactive (list (read-directory-name "Project directory: ")))
+  (slime-start :program "qlot"
+               :program-args '("exec" "ros" "-S" "." "run")
+               :directory directory
+               :name 'qlot
+               :env (list (concat "PATH="
+                                  (mapconcat 'identity exec-path ":"))
+                          (concat "QUICKLISP_HOME="
+                                  directory "quicklisp/"))))
+(require 'ac-slime)
+(add-hook 'slime-mode-hook 'set-up-slime-ac)
+(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'slime-repl-mode))
 
-(defun slime-kill-all-buffers ()
-  "Kill all the slime related buffers. This is only used by the
-  repl command sayoonara."
-  (dolist (buf (buffer-list))
-  (when (or (string= (buffer-name buf) slime-event-buffer-name)
-            (string-match "^\\*inferior-lisp*" (buffer-name buf))
-            (string-match "^\\*slime-repl .*\\*$" (buffer-name buf))
-            (string-match "^\\*sldb .*\\*$" (buffer-name buf)))
-    (kill-buffer buf))))
-
-(defun slime-quit ()
-  (interactive)
-  (progn
-    (if (slime-connected-p) (slime-disconnect))
-    (slime-kill-all-buffers)))
-
-(add-hook 'lisp-mode-hook
-  (lambda ()
-   (progn
-     (slime-mode t)
-     (local-set-key "\C-j" 'insert-parentheses)
-     (local-set-key "\C-\M-j" 'slime-insert-balanced-comments)
-     (local-set-key "\C-\M-l" 'slime-remove-balanced-comments)
-     (local-set-key "\C-c\C-q" 'slime-quit))))
-
-(add-to-list 'slime-lisp-implementations `(sbcl (,(executable-find "sbcl")) :coding-system utf-8-unix))
-
-;;lisp-mode
+;lisp-mode
+(require 'paredit)
 (append-auto-mode-alist "\\.cl$" 'lisp-mode)
-(put 'if-let 'lisp-indent-function 2)
-(font-lock-add-keywords 'lisp-mode '(("\\([^']\\|^\\)(\\(if-let\\)[ \n)]" 2 font-lock-keyword-face)))
-(put 'aif 'lisp-indent-function 0)
-(font-lock-add-keywords 'lisp-mode '(("\\([^']\\|^\\)(\\(aif\\)[ \n)]" 2 font-lock-keyword-face)))
-(font-lock-add-keywords 'lisp-mode '(("\\([^']\\|^\\)(\\(defclass\\*\\)[ \n)]" 2 font-lock-keyword-face)))
-(font-lock-add-keywords 'lisp-mode '(("defclass\\*[ \n]*\\([^ ]*\\)" 1 font-lock-string-face)))
-(font-lock-add-keywords 'lisp-mode '(("\\([^']\\|^\\)(\\(defmemfn\\*\\)[ \n)]" 2 font-lock-keyword-face)))
-(font-lock-add-keywords 'lisp-mode '(("defmemfn\\*[ \n]*\\([^ ]*\\)" 1 font-lock-string-face)))
+(add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+(add-hook 'lisp-interacton-mode-hook 'enable-paredit-mode)
+(add-hook 'lisp-mode-hook 'enable-paredit-mode)
+(add-hook 'lisp-mode-hook (lambda () (auto-complete-mode t)))
 
 ;; gauche
 (defmode gauche-mode "\\.scm$"
@@ -462,9 +478,8 @@
 ;(auto-install-compatibility-setup)
 
 ;; auto-complete
-(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete/")
+(require 'auto-complete)
 (require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
 (ac-config-default)
 (global-auto-complete-mode t)
 
@@ -568,3 +583,5 @@
 (custom-set-variables
  '(foreign-regexp/regexp-type 'javascript) ;; ruby or perl available
  '(reb-re-syntax 'foreign-regexp/re-builder/query-replace-on-target-buffer))
+
+;;; .emacs-common-settings.el ends here

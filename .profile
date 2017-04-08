@@ -6,9 +6,6 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
-#
-# DEV
-#
 case "${OSTYPE}" in
 netbsd*)
     ;;
@@ -20,9 +17,6 @@ freebsd*)
     ;;
 darwin*)
     export PATH="/usr/local/bin/:$PATH" # brew
-    # microchip
-    export PATH=$PATH:"/Applications/microchip/xc8/v1.20/bin"
-    export PATH=$PATH:"/Applications/microchip/xc16/v1.23/bin"
     # Java
     export PATH=$PATH:"/usr/local/apache-maven-3.2.5/bin"
     export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/Contents/Home"
@@ -30,6 +24,10 @@ darwin*)
     export PATH=$PATH:"$HOME/Library/Android/sdk/platform-tools"
     # nodebrew
     export PATH=$PATH:"$HOME/.nodebrew/current/bin"
+    # gcc-arm-none-eabi
+    export PATH=$PATH:"/usr/local/gcc-arm/gcc-arm-none-eabi-5_4-2016q3/bin"
+    # rust
+    source $HOME/.cargo/env
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"
@@ -39,12 +37,24 @@ linux*)
     ;;
 esac
 
-#export ARCHFLAGS="$ARC"
-#export CFLAGS="-I$INCLUDEDIR $ARC"
-#export CXXFLAGS="-I$INCLUDEDIR $ARC"
-#export LDFLAGS="-L$LIBDIR $ARC"
+#
+# go
+#
+GOPATH="$HOME/go"
+PATH="$GOPATH/bin:$PATH"
+
+#
+# PATH
+#
+BINDIR="$HOME/opt/bin"
+PATH="$BINDIR:$PATH"
+
+# roswell
+PATH="$HOME/.roswell/bin:$PATH"
 
 #
 # TERM
 #
-export TERM="xterm-color"
+export TERM="xterm-256color"
+
+export PATH="$HOME/.cargo/bin:$PATH"
