@@ -28,6 +28,10 @@ darwin*)
     export PATH=$PATH:"/usr/local/gcc-arm/gcc-arm-none-eabi-5_4-2016q3/bin"
     # rust
     source $HOME/.cargo/env
+    # esp32
+    export IDF_PATH="/opt/esp/esp-idf"
+    export PATH=$PATH:"/opt/esp/xtensa-esp32-elf/bin"
+    export PYTHONPATH="/Users/smihica/Library/Python/2.7/"
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"
@@ -56,5 +60,4 @@ PATH="$HOME/.roswell/bin:$PATH"
 # TERM
 #
 export TERM="xterm-256color"
-
 export PATH="$HOME/.cargo/bin:$PATH"

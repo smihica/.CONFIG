@@ -205,6 +205,7 @@
 (setq python-python-command "/usr/bin/python3.1")
 
 ;; C
+(append-auto-mode-alist "\\.cm$" 'c-mode)
 (add-hook 'c-mode-common-hook
           '(lambda ()
              (c-set-style "BSD")
@@ -216,6 +217,8 @@
 
 ;; C++
 (append-auto-mode-alist "\\.h$" 'c++-mode)
+(append-auto-mode-alist "\\.hm$" 'c++-mode)
+(append-auto-mode-alist "\\.cppm$" 'c++-mode)
 (add-hook 'c++-mode-hook
           '(lambda ()
              (c-set-style "BSD")
@@ -583,5 +586,10 @@
 (custom-set-variables
  '(foreign-regexp/regexp-type 'javascript) ;; ruby or perl available
  '(reb-re-syntax 'foreign-regexp/re-builder/query-replace-on-target-buffer))
+
+;; shell runs on same window
+(add-to-list 'display-buffer-alist
+             `(,(regexp-quote "*shell") display-buffer-same-window))
+
 
 ;;; .emacs-common-settings.el ends here

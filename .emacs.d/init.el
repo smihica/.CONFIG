@@ -42,7 +42,7 @@
  '(foreign-regexp/regexp-type (quote javascript))
  '(package-selected-packages
    (quote
-    (ac-slime paredit slime web-mode scala-mode sass-mode racer php-mode macrostep go-mode flymake-jshint flycheck-rust emmet-mode paredit)))
+    (python-mode ac-slime paredit slime web-mode scala-mode sass-mode racer php-mode macrostep go-mode flymake-jshint flycheck-rust emmet-mode paredit)))
  '(reb-re-syntax
    (quote foreign-regexp/re-builder/query-replace-on-target-buffer))
  '(safe-local-variable-values
