@@ -32,6 +32,8 @@ darwin*)
     export IDF_PATH="/opt/esp/esp-idf"
     export PATH=$PATH:"/opt/esp/xtensa-esp32-elf/bin"
     export PYTHONPATH="/Users/smihica/Library/Python/2.7/"
+    export C_INCLUDE_PATH="/usr/local/include"
+    export CPLUS_INCLUDE_PATH="/usr/local/include"
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"
