@@ -341,10 +341,8 @@
                :program-args '("exec" "ros" "-S" "." "run")
                :directory directory
                :name 'qlot
-               :env (list (concat "PATH="
-                                  (mapconcat 'identity exec-path ":"))
-                          (concat "QUICKLISP_HOME="
-                                  directory "quicklisp/"))))
+               :env (list (concat "PATH=" (mapconcat 'identity exec-path ":")))))
+
 (require 'ac-slime)
 (add-hook 'slime-mode-hook 'set-up-slime-ac)
 (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)

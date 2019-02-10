@@ -34,6 +34,9 @@ darwin*)
     export PYTHONPATH="/Users/smihica/Library/Python/2.7/"
     export C_INCLUDE_PATH="/usr/local/include"
     export CPLUS_INCLUDE_PATH="/usr/local/include"
+    # go
+    export GOPATH="/opt/go"
+    export PATH="$GOPATH/bin:$PATH"
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"
@@ -42,18 +45,6 @@ linux*)
     PATH="/var/lib/gems/1.8/bin/:$PATH"
     ;;
 esac
-
-#
-# go
-#
-GOPATH="$HOME/go"
-PATH="$GOPATH/bin:$PATH"
-
-#
-# PATH
-#
-BINDIR="$HOME/opt/bin"
-PATH="$BINDIR:$PATH"
 
 # roswell
 PATH="$HOME/.roswell/bin:$PATH"

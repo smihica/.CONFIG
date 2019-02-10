@@ -14,7 +14,7 @@ if [ ! -e ${backup} ]; then
 	mkdir ${backup}
 fi
 
-for f in .profile .zshrc .termcap .tmux.conf .emacs.d
+for f in .profile .zshrc .termcap .tmux.conf .emacs.d .roswell
 do
 link_dotfile $f $f
 done
