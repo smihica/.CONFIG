@@ -42,12 +42,16 @@
  '(foreign-regexp/regexp-type (quote javascript))
  '(package-selected-packages
    (quote
-    (python-mode ac-slime paredit slime web-mode scala-mode sass-mode racer php-mode macrostep go-mode flymake-jshint flycheck-rust emmet-mode paredit)))
+    (modern-cpp-font-lock flycheck-gometalinter add-node-modules-path yaml-mode go-autocomplete python-mode ac-slime paredit slime web-mode scala-mode sass-mode racer php-mode macrostep go-mode flymake-jshint flycheck-rust emmet-mode paredit)))
  '(reb-re-syntax
    (quote foreign-regexp/re-builder/query-replace-on-target-buffer))
  '(safe-local-variable-values
    (quote
-    ((c-tab-always-indent)
+    ((eval add-hook
+           (quote c++-mode-hook)
+           (lambda nil
+             (setq flycheck-clang-language-standard "c++14")))
+     (c-tab-always-indent)
      (web-mode-css-indent-offset . 4)
      (web-mode-markup-indent-offset . 4)
      (web-mode-code-indent-offset . 4)

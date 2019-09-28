@@ -102,6 +102,7 @@ freebsd*)
 darwin*)
     alias ls="ls -G -w"
     alias vim="vi"
+    ## alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs -nw"
     ;;
 linux*)
     alias ls="ls --color"
@@ -114,6 +115,11 @@ esac
 
 # emacs
 if [ -n "$INSIDE_EMACS" ]; then
-    export EDITOR=emacsclient
+    export EDITOR=emacs
     unset zle_bracketed_paste
 fi
+
+export NVM_DIR=~/.nvm
+source /usr/local/opt/nvm/nvm.sh
+
+eval "$(goenv init -)"

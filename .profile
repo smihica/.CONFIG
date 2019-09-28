@@ -37,6 +37,8 @@ darwin*)
     # go
     export GOPATH="/opt/go"
     export PATH="$GOPATH/bin:$PATH"
+    # gettext
+    export PATH="/usr/local/opt/gettext/bin:$PATH"
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"

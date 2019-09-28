@@ -12,7 +12,7 @@
 (when (< emacs-major-version 24)
   ;; For important compatibility libraries like cl-lib
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize) ;; You might already have this line
+;; (package-initialize)
 
 
 ;; enable evil
@@ -217,6 +217,8 @@
 
 ;; C++
 (append-auto-mode-alist "\\.h$" 'c++-mode)
+(append-auto-mode-alist "\\.cpp$" 'c++-mode)
+(append-auto-mode-alist "\\.hpp$" 'c++-mode)
 (append-auto-mode-alist "\\.hm$" 'c++-mode)
 (append-auto-mode-alist "\\.cppm$" 'c++-mode)
 (add-hook 'c++-mode-hook
@@ -299,7 +301,7 @@
 ;;; racerやrustfmt、コンパイラにパスを通す
 (add-to-list 'exec-path (expand-file-name "~/.cargo/bin/"))
 ;;; rust-modeでrust-format-on-saveをtにすると自動でrustfmtが走る
-; (eval-after-load "rust-mode" '(setq-default rust-format-on-save t))
+(eval-after-load "rust-mode" '(setq-default rust-format-on-save t))
 ;;; rustのファイルを編集するときにracerとflycheckを起動する
 (add-hook 'rust-mode-hook
           (lambda ()
@@ -391,23 +393,38 @@
 ;(define-key slime-mode-map (kbd "C-c C-d H") 'gauche-ref-lookup)
 
 ;; arc
-(require 'inferior-arc)
-(setq arc-program-name "/home/nagayoru/svn/arc/arc.sh")
-(defmode arc-mode "\\.arc$")
+; (require 'inferior-arc)
+; (setq arc-program-name "/home/nagayoru/svn/arc/arc.sh")
+; (defmode arc-mode "\\.arc$")
 
 ;; arduino
 (append-auto-mode-alist "\\.pde$" 'c++-mode)
 
 ;; go
-(add-hook
- 'go-mode-hook
- (lambda ()
-   (setq indent-tabs-mode t)
-   (setq tab-width        4)
-   (auto-complete-mode t)
-   (flycheck-mode)))
+;; Goのパスを通す
+(add-to-list 'exec-path (expand-file-name "/usr/local/bin"))
+(add-to-list 'exec-path (expand-file-name "/opt/go/bin/"))
+(add-hook 'go-mode-hook 'flycheck-mode)
+(require 'flycheck-gometalinter)
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup))
+(add-hook 'go-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook 'gofmt-before-save)
+            (local-set-key (kbd "M-.") 'godef-jump)
+            (setq indent-tabs-mode t)
+            (setq c-basic-offset   4)
+            (setq tab-width        4)
+            (auto-complete-mode    t)
+            (setq flycheck-gometalinter-test t)
+            (setq flycheck-gometalinter-fast t)
+            (setq flycheck-gometalinter-disable-linters '("golint"))))
+(require 'go-autocomplete)
+(require 'auto-complete-config)
 
 ;; jsx, es6/7
+(require 'add-node-modules-path)
+
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.erb$"  . web-mode))
@@ -431,6 +448,7 @@
    (setq indent-tabs-mode              nil)
    (setq tab-width                     4)
    (local-unset-key "\M-;")
+   (add-node-modules-path)
    (flycheck-add-mode 'javascript-eslint 'web-mode)
    (flycheck-mode)))
 
