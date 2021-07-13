@@ -16,29 +16,39 @@ freebsd*)
     export PATH="$HOME/.roswell/bin/:$PATH"
     ;;
 darwin*)
-    export PATH="/usr/local/bin/:$PATH" # brew
+    export PATH="/usr/local/bin:/usr/local/sbin:$PATH" # brew
     # Java
     export PATH=$PATH:"/usr/local/apache-maven-3.2.5/bin"
-    export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/Contents/Home"
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.5.jdk/Contents/Home"
     # android
     export PATH=$PATH:"$HOME/Library/Android/sdk/platform-tools"
+    export PATH=$PATH:"$HOME/Library/Android/sdk/tools/bin"
+    export ANDROID_NDK_HOME="$HOME/Library/Android/sdk/ndk-bundle"
+    export PATH=$PATH:"$ANDROID_NDK_HOME"
     # nodebrew
     export PATH=$PATH:"$HOME/.nodebrew/current/bin"
-    # gcc-arm-none-eabi
-    export PATH=$PATH:"/usr/local/gcc-arm/gcc-arm-none-eabi-5_4-2016q3/bin"
     # rust
     source $HOME/.cargo/env
+    export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library"
     # esp32
-    export IDF_PATH="/opt/esp/esp-idf"
-    export PATH=$PATH:"/opt/esp/xtensa-esp32-elf/bin"
-    export PYTHONPATH="/Users/smihica/Library/Python/2.7/"
-    export C_INCLUDE_PATH="/usr/local/include"
-    export CPLUS_INCLUDE_PATH="/usr/local/include"
+    alias activate_esp='. /opt/esp/esp-idf/export.sh'
+    # esp32-old
+    # export IDF_PATH="/opt/esp/esp-idf"
+    # export PATH=$PATH:"/opt/esp/xtensa-esp32-elf/bin"
+    # export PYTHONPATH="/Users/smihica/Library/Python/2.7/"
+    # export C_INCLUDE_PATH="/usr/local/include:$C_INCLUDE_PATH"
+    # export CPLUS_INCLUDE_PATH="/usr/local/include:$CPLUS_INCLUDE_PATH"
     # go
     export GOPATH="/opt/go"
     export PATH="$GOPATH/bin:$PATH"
     # gettext
     export PATH="/usr/local/opt/gettext/bin:$PATH"
+    # flutter
+    export PATH="/opt/flutter/bin:$PATH"
+    # ros
+    export PATH="~/.roswell/bin:$PATH"
+    # llvm
+    export PATH="/usr/local/Cellar/llvm/10.0.0_3/bin:$PATH"
     ;;
 linux*)
     INCLUDEDIR="/usr/include -I$INCLUDEDIR"
@@ -51,8 +61,14 @@ esac
 # roswell
 PATH="$HOME/.roswell/bin:$PATH"
 
+# emacs
+alias emacs='emacs -nw'
+
 #
 # TERM
 #
 export TERM="xterm-256color"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+source $(brew --prefix nvm)/nvm.sh

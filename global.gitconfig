@@ -19,3 +19,5 @@
         stashed = stash list
         correct = commit --amend
         histdiff = cherry -v
+[pull]
+	rebase = false
